@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>О проекте — ЭкоТатарстан</title>
+<meta name="description" content="ЭкоТатарстан — цифровая платформа экотуризма и эковолонтёрства Республики Татарстан.">
+<meta name="theme-color" content="#0d2818">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = { theme: { extend: {
+    colors: { green900:'#1b4332', green800:'#0d2818', green700:'#2d6a4f', green500:'#40916c', green300:'#74c69d', green100:'#d8f3dc', sand:'#f4f1de', cream:'#f5f1e8', ink:'#1b1b1b' },
+    fontFamily: { sans: ['Inter','system-ui','sans-serif'] }
+  }}}
+</script>
+<link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
+<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>">
+</head>
+<body class="bg-white">
+
+<header class="site-header" style="position:fixed;top:0;left:0;right:0;z-index:50;background:rgba(13,40,24,.85);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.08);padding:.9rem 0">
+  <div class="container-wide" style="display:flex;align-items:center;justify-content:space-between;gap:1.5rem">
+    <a href="index.html" class="logo-plate">
+      <div class="logo-plate__main">🌿 EcoTatarstan</div>
+      <div class="logo-plate__sub">Платформа 2026</div>
+    </a>
+    <nav class="hero-nav__menu">
+      <a href="index.html">Главная</a>
+      <a href="map.html">Карта троп</a>
+      <a href="oopt.html">ООПТ</a>
+      <a href="calendar.html">Календарь</a>
+      <a href="volunteer.html">Волонтёрство</a>
+      <a href="about.html" class="active">О проекте</a>
+    </nav>
+    <button class="burger-round" id="burger" aria-label="Меню"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="fullhero" style="min-height:75vh;padding-top:8rem;padding-bottom:5rem">
+  <div class="fullhero__bg" style="background-image:url('https://images.unsplash.com/photo-1511497584788-876760111969?w=1920&q=80')"></div>
+  <div class="fullhero__overlay"></div>
+  <div class="noise-overlay"></div>
+
+  <div class="fullhero__content container-wide">
+    <div style="margin-top:2rem" class="hero-anim-2">
+      <div style="font-size:.72rem;letter-spacing:.3em;text-transform:uppercase;color:rgba(255,255,255,.7);font-weight:800;margin-bottom:1rem">О проекте</div>
+      <h1 class="giant" style="color:#fff;font-size:clamp(2.6rem,7vw,5.5rem)">
+        Собираем экотуризм<br>
+        Татарстана <em style="font-style:italic">в одном</em><br>
+        месте
+      </h1>
+      <p style="color:rgba(255,255,255,.85);max-width:680px;margin-top:1.5rem;font-size:1.1rem">
+        ЭкоТатарстан — цифровая платформа, которая решает главную проблему экотуризма в республике: информация о тропах, заповедниках и волонтёрских акциях разбросана по десяткам сайтов, групп и PDF-файлов.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ПРОБЛЕМА -->
+<section class="section section--cream">
+  <div class="container">
+    <div class="section-head" data-aos="fade-up">
+      <div style="font-size:.72rem;letter-spacing:.3em;text-transform:uppercase;color:var(--green-700);font-weight:800;margin-bottom:.8rem">Проблема</div>
+      <h2 class="giant">Четыре <em style="font-style:italic">барьера</em></h2>
+      <p style="font-size:1.05rem;margin-top:1rem;max-width:640px">Сегодня турист, желающий провести выходные на природе, сталкивается с четырьмя барьерами.</p>
+    </div>
+
+    <div class="grid grid-2">
+      <div class="problem-item" data-aos="fade-up">
+        <div class="problem-item__num">01</div>
+        <div>
+          <h4>Информация разрознена</h4>
+          <p>Сведения о тропах, правилах ООПТ и волонтёрских акциях разбросаны по сайтам министерств, групп ВК, Telegram-каналов и бумажных буклетов.</p>
+        </div>
+      </div>
+      <div class="problem-item" data-aos="fade-up" data-aos-delay="100">
+        <div class="problem-item__num">02</div>
+        <div>
+          <h4>Нет единой карты</h4>
+          <p>Не существует интерактивной карты, где были бы собраны все экотропы республики с длиной, сложностью и координатами.</p>
+        </div>
+      </div>
+      <div class="problem-item" data-aos="fade-up" data-aos-delay="200">
+        <div class="problem-item__num">03</div>
+        <div>
+          <h4>Сложно стать волонтёром</h4>
+          <p>Непонятно, с чего начать, куда писать, какие есть проекты и что нужно уметь. В результате — сотни желающих, которые так и не выехали.</p>
+        </div>
+      </div>
+      <div class="problem-item" data-aos="fade-up" data-aos-delay="300">
+        <div class="problem-item__num">04</div>
+        <div>
+          <h4>ООПТ недополучают помощь</h4>
+          <p>Заповедникам и заказникам нужны руки, но организовать поток волонтёров без цифровой инфраструктуры крайне сложно.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ЦЕЛЬ И ЗАДАЧИ -->
+<section class="section">
+  <div class="container">
+    <div class="section-head" data-aos="fade-up">
+      <div style="font-size:.72rem;letter-spacing:.3em;text-transform:uppercase;color:var(--green-700);font-weight:800;margin-bottom:.8rem">Цель и задачи</div>
+      <h2 class="giant">Создать <em style="font-style:italic">единую</em> платформу</h2>
+      <p style="font-size:1.05rem;margin-top:1rem;max-width:720px">
+        <strong>Цель:</strong> создать единую цифровую платформу экотуризма и эковолонтёрства Татарстана, которая соединит туристов, волонтёров и организаторов ООПТ.
+      </p>
+    </div>
+
+    <div class="goals">
+      <div class="goal" data-aos="fade-up"><strong>Собрать данные.</strong> Оцифровать и систематизировать информацию обо всех экотропах и ООПТ республики.</div>
+      <div class="goal" data-aos="fade-up" data-aos-delay="50"><strong>Построить карту.</strong> Создать интерактивную карту с фильтрами по сложности, району и типу маршрута.</div>
+      <div class="goal" data-aos="fade-up" data-aos-delay="100"><strong>Объединить календарь.</strong> Собрать в одном календаре все экологические мероприятия республики с онлайн-записью.</div>
+      <div class="goal" data-aos="fade-up" data-aos-delay="150"><strong>Упростить вход в волонтёрство.</strong> Разработать понятный путь от первого клика до статуса «Хранителя».</div>
+      <div class="goal" data-aos="fade-up" data-aos-delay="200"><strong>Помочь ООПТ.</strong> Дать заповедникам и заказникам инструмент для набора и координации волонтёров.</div>
+      <div class="goal" data-aos="fade-up" data-aos-delay="250"><strong>Повысить безопасность.</strong> Публиковать актуальные правила поведения на ООПТ и контакты экстренных служб.</div>
+    </div>
+  </div>
+</section>
+
+<!-- КОМАНДА -->
+<section class="section section--cream">
+  <div class="container">
+    <div style="margin-top:4rem" data-aos="fade-up">
+      <h3 class="giant" style="font-size:clamp(1.6rem,3vw,2.4rem);margin-bottom:2rem">Партнёры</h3>
+    </div>
+    <div class="grid grid-4">
+      <div class="feat-card" style="text-align:center" data-aos="fade-up">
+        <div style="font-size:2.5rem;margin-bottom:.6rem">🏛️</div>
+        <h4 style="font-size:1rem">Минэкологии РТ</h4>
+        <p style="font-size:.85rem">Генеральный партнёр</p>
+      </div>
+      <div class="feat-card" style="text-align:center" data-aos="fade-up" data-aos-delay="100">
+        <div style="font-size:2.5rem;margin-bottom:.6rem">🌲</div>
+        <h4 style="font-size:1rem">Волжско-Камский заповедник</h4>
+        <p style="font-size:.85rem">Научный партнёр</p>
+      </div>
+      <div class="feat-card" style="text-align:center" data-aos="fade-up" data-aos-delay="200">
+        <div style="font-size:2.5rem;margin-bottom:.6rem">🏕️</div>
+        <h4 style="font-size:1rem">НП «Нижняя Кама»</h4>
+        <p style="font-size:.85rem">Партнёр по тропам</p>
+      </div>
+      <div class="feat-card" style="text-align:center" data-aos="fade-up" data-aos-delay="300">
+        <div style="font-size:2.5rem;margin-bottom:.6rem">🎓</div>
+        <h4 style="font-size:1rem">КФУ, Институт экологии</h4>
+        <p style="font-size:.85rem">Образовательный партнёр</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ФОРМА -->
+<section class="section">
+  <div class="container">
+    <div class="split">
+      <div data-aos="fade-right">
+        <div style="font-size:.72rem;letter-spacing:.3em;text-transform:uppercase;color:var(--green-700);font-weight:800;margin-bottom:.8rem">Контакты</div>
+        <h2 class="giant" style="margin-bottom:1.2rem">Свяжитесь<br>с <em style="font-style:italic">нами</em></h2>
+        <p style="font-size:1.05rem;margin-bottom:2rem;max-width:520px">
+          Есть идея, вопрос или предложение о сотрудничестве? Напишите — мы отвечаем в течение двух рабочих дней.
+        </p>
+
+        <ul style="display:flex;flex-direction:column;gap:1rem">
+          <li style="display:flex;align-items:center;gap:1rem">
+            <span style="width:48px;height:48px;border-radius:14px;background:var(--green-100);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0">📞</span>
+            <a href="tel:+78430000000" style="font-weight:800;color:var(--ink)">+7 (843) 000-00-00</a>
+          </li>
+          <li style="display:flex;align-items:center;gap:1rem">
+            <span style="width:48px;height:48px;border-radius:14px;background:var(--green-100);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0">✉️</span>
+            <a href="mailto:info@ecotatarstan.ru" style="font-weight:800;color:var(--ink)">info@ecotatarstan.ru</a>
+          </li>
+          <li style="display:flex;align-items:center;gap:1rem">
+            <span style="width:48px;height:48px;border-radius:14px;background:var(--green-100);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0">📍</span>
+            <span style="font-weight:800;color:var(--ink)">г. Казань, ул. Зелёная, 15, офис 204</span>
+          </li>
+          <li style="display:flex;align-items:center;gap:1rem">
+            <span style="width:48px;height:48px;border-radius:14px;background:var(--green-100);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0">🕘</span>
+            <span style="font-weight:800;color:var(--ink)">Пн–Пт, 09:00–18:00</span>
+          </li>
+        </ul>
+      </div>
+
+      <form id="contactForm" class="feat-card" style="padding:2.2rem" data-aos="fade-left">
+        <div class="field">
+          <label>Ваше имя *</label>
+          <input type="text" required placeholder="Иван Иванов">
+        </div>
+        <div class="field">
+          <label>Email *</label>
+          <input type="email" required placeholder="you@example.com">
+        </div>
+        <div class="field">
+          <label>Тема</label>
+          <select>
+            <option>Вопрос по платформе</option>
+            <option>Предложение сотрудничества</option>
+            <option>Добавить тропу или событие</option>
+            <option>Сообщить о проблеме на ООПТ</option>
+            <option>Другое</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Сообщение *</label>
+          <textarea required placeholder="Ваше сообщение…"></textarea>
+        </div>
+        <button type="submit" class="btn-hero btn-primary btn-block">Отправить сообщение</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="section section--tight">
+  <div class="container">
+    <div class="cta" data-aos="zoom-in">
+      <div>
+        <h2 class="giant">Начни <em style="font-style:italic">путь</em><br>прямо сейчас</h2>
+        <p>Карта троп, ООПТ и календарь событий — всё уже готово к использованию.</p>
+      </div>
+      <div class="cta__actions">
+        <a href="map.html" class="btn-hero btn-white">🗺️ Карта троп</a>
+        <a href="volunteer.html" class="btn-hero btn-glass">🤝 Волонтёрство</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo">🌿 EcoTatarstan</div>
+        <p>Цифровая платформа экотуризма и эковолонтёрства Республики Татарстан.</p>
+      </div>
+      <div>
+        <h4>Навигация</h4>
+        <ul>
+          <li><a href="index.html">Главная</a></li>
+          <li><a href="map.html">Карта троп</a></li>
+          <li><a href="oopt.html">Карта ООПТ</a></li>
+          <li><a href="calendar.html">Календарь</a></li>
+          <li><a href="volunteer.html">Волонтёрство</a></li>
+          <li><a href="about.html">О проекте</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Контакты</h4>
+        <ul>
+          <li>📞 <a href="tel:+78430000000">+7 (843) 000-00-00</a></li>
+          <li>✉️ <a href="mailto:info@ecotatarstan.ru">info@ecotatarstan.ru</a></li>
+          <li>📍 г. Казань, ул. Зелёная, 15</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">© 2026 ЭкоТатарстан. Все права защищены.</div>
+  </div>
+</footer>
+
+<div class="mobile-nav" id="mobileNav">
+  <a href="index.html">Главная</a>
+  <a href="map.html">Карта троп</a>
+  <a href="oopt.html">ООПТ</a>
+  <a href="calendar.html">Календарь</a>
+  <a href="volunteer.html">Волонтёрство</a>
+  <a href="about.html">О проекте</a>
+</div>
+
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="modal__head">
+      <h3 class="modal__title" id="detailTitle" style="font-size:1.5rem;font-weight:900">Подробнее</h3>
+      <button class="modal__close" aria-label="Закрыть">✕</button>
+    </div>
+    <div id="detailBody"></div>
+  </div>
+</div>
+
+<script>
+  document.getElementById('contactForm')?.addEventListener('submit', e => {
+    e.preventDefault();
+    alert('Спасибо! Ваше сообщение отправлено. Мы ответим в течение двух рабочих дней.');
+    e.target.reset();
+  });
+</script>
+<script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Карта экотроп — ЭкоТатарстан</title>
+<meta name="description" content="Интерактивная карта экотроп Республики Татарстан с фильтрами по сложности и району.">
+<meta name="theme-color" content="#0d2818">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = { theme: { extend: {
+    colors: { green900:'#1b4332', green800:'#0d2818', green700:'#2d6a4f', green500:'#40916c', green300:'#74c69d', green100:'#d8f3dc', sand:'#f4f1de', cream:'#f5f1e8', ink:'#1b1b1b' },
+    fontFamily: { sans: ['Inter','system-ui','sans-serif'] }
+  }}}
+</script>
+<link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
+<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="styles.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>">
+</head>
+<body class="bg-white">
+
+<!-- ==================== HEADER ==================== -->
+<header class="site-header" style="position:fixed;top:0;left:0;right:0;z-index:50;background:rgba(13,40,24,.85);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.08);padding:.9rem 0">
+  <div class="container-wide" style="display:flex;align-items:center;justify-content:space-between;gap:1.5rem">
+    <a href="index.html" class="logo-plate">
+      <div class="logo-plate__main">🌿 EcoTatarstan</div>
+      <div class="logo-plate__sub">Платформа 2026</div>
+    </a>
+    <nav class="hero-nav__menu">
+      <a href="index.html">Главная</a>
+      <a href="map.html" class="active">Карта троп</a>
+      <a href="oopt.html">ООПТ</a>
+      <a href="calendar.html">Календарь</a>
+      <a href="volunteer.html">Волонтёрство</a>
+      <a href="about.html">О проекте</a>
+    </nav>
+    <button class="burger-round" id="burger" aria-label="Меню">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- ==================== HERO ==================== -->
+<section class="fullhero" style="min-height:70vh;padding-top:8rem;padding-bottom:4rem">
+  <div class="fullhero__bg" style="background-image:url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&q=80')"></div>
+  <div class="fullhero__overlay"></div>
+  <div class="noise-overlay"></div>
+
+  <div class="fullhero__content container-wide">
+    <div class="hero-nav hero-anim-1" style="justify-content:flex-start;opacity:0"></div>
+
+    <div style="margin-top:2rem" class="hero-anim-2">
+      <div style="font-size:.72rem;letter-spacing:.3em;text-transform:uppercase;color:rgba(255,255,255,.7);font-weight:800;margin-bottom:1rem">Интерактивная карта · 2026</div>
+      <h1 class="giant" style="color:#fff;font-size:clamp(3rem,8vw,6.5rem)">
+        Найди<br>
+        свою <em style="font-style:italic">тропу</em>
+      </h1>
+      <p style="color:rgba(255,255,255,.85);max-width:640px;margin-top:1.5rem;font-size:1.1rem">
+        Актуальные экологические тропы Татарстана 2026 года. Кликните на тропу в списке — карта центрируется. Цвет маркера показывает сложность маршрута.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== ФИЛЬТРЫ + КАРТА ==================== -->
+<section class="section section--cream">
+  <div class="container-wide">
+
+    <div class="filters" data-aos="fade-up">
+      <div class="field">
+        <label>Сложность</label>
+        <select data-filter="difficulty">
+          <option value="">Все</option>
+          <option value="лёгкая">Лёгкая</option>
+          <option value="средняя">Средняя</option>
+          <option value="сложная">Сложная</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Район</label>
+        <select data-filter="district">
+          <option value="">Все районы</option>
+          <option value="тетюшский">Тетюшский</option>
+          <option value="буинский">Буинский</option>
+          <option value="балтасинский">Балтасинский</option>
+          <option value="высокогорский">Высокогорский</option>
+          <option value="лениногорский">Лениногорский</option>
+          <option value="елабужский">Елабужский</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Поиск</label>
+        <input type="text" data-filter="search" placeholder="Название тропы…">
+      </div>
+    </div>
+
+    <div class="map-layout" data-aos="fade-up">
+
+      <!-- СПИСОК ТРОП -->
+      <aside class="trail-list">
+        <div style="padding:.5rem .6rem 1rem;border-bottom:1px solid rgba(45,106,79,.08);margin-bottom:1rem">
+          <div style="font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;font-weight:800;color:rgba(27,27,27,.5)">Актуальные тропы</div>
+          <div style="font-size:1.4rem;font-weight:900;color:var(--green-900);margin-top:.3rem">7 маршрутов</div>
+        </div>
+
+        <article class="trail-item" data-id="dolgaya" data-difficulty="лёгкая" data-district="тетюшский" data-category>
+          <h4>Экотропа «Долгая Поляна»</h4>
+          <div class="trail-item__meta"><span>📏 1.5 км</span><span>⚡ лёгкая</span><span>📍 Тетюшский</span></div>
+          <p>Две аллеи 130-летних лиственниц, обрыв над Волгой.</p>
+          <button class="btn-hero btn-outline btn-sm js-detail" style="margin-top:.8rem;width:100%" data-detail="dolgaya-trail">Подробнее</button>
+        </article>
+
+        <article class="trail-item" data-id="bay-urmany" data-difficulty="лёгкая" data-district="буинский" data-category>
+          <h4>Путешествие в Бай Урманы</h4>
+          <div class="trail-item__meta"><span>📏 2 км</span><span>⚡ лёгкая</span><span>📍 Буинский</span></div>
+          <p>150 вековых деревьев: липы, сосны-богатыри, берёзы.</p>
+          <button class="btn-hero btn-outline btn-sm js-detail" style="margin-top:.8rem;width:100%" data-detail="bay-urmany-trail">Подробнее</button>
+        </article>
+
+        <article class="trail-item" data-id="barsky" data-difficulty="лёгкая" data-district="балтасинский" data-category>
+          <h4>Прогулка по Барскому парку</h4>
+          <div class="trail-item__meta"><span>📏 1.5 км</span><span>⚡ лёгкая</span><span>📍 Балтасинский</span></div>
+          <p>Интерактивная лаборатория под открытым небом.</p>
+          <button class="btn-hero btn-outline btn-sm js-detail" style="margin-top:.8rem;width:100%" data-detail="barsky-trail">Подробнее</button>
+        </article>
+
+        <article class="trail-item" data-id="chulpan" data-difficulty="лёгкая" data-district="высокогорский" data-category>
+          <h4>Прикоснись к природе</h4>
+          <div class="trail-item__meta"><span>📏 1 км</span><span>⚡ лёгкая</span><span>📍 Высокогорский</span></div>
+          <p>Заказник «Чулпан», скамейки для отдыха, звуки леса.</p>
+          <button class="btn-hero btn-outline btn-sm js-detail" style="margin-top:.8rem;width:100%" data-detail="chulpan-trail">Подробнее</button>
+        </article>
+
+        <article class="trail-item" data-id="stepnoy" data-difficulty="средняя" data-district="лениногорский" data-category>
+          <h4>По тропинкам Степного</h4>
+          <div class="trail-item__meta"><span>📏 2 км</span><span>⚡ средняя</span><span>📍 Лениногорский</span></div>
+          <p>Сосновый бор, муравьиные города, совы, сурки-байбаки.</p>
+          <button class="btn-hero btn-outline btn-sm js-detail" style="margin-top:.8rem;width:100%" data-detail="stepnoy-trail">Подробнее</button>
+        </article>
+
+        <article class="trail-item" data-id="korabelnaya" data-difficulty="лёгкая" data-district="елабужский" data-category>
+          <h4>Корабельная роща</h4>
+          <div class="trail-item__meta"><span>📏 1 км</span><span>⚡ лёгкая</span><span>📍 Елабужский</span></div>
+          <p>НП «Нижняя Кама», история Боровецкого леса.</p>
+          <button class="btn-hero btn-outline btn-sm js-detail" style="margin-top:.8rem;width:100%" data-detail="korabelnaya-trail">Подробнее</button>
+        </article>
+
+        <article class="trail-item" data-id="maly-bor" data-difficulty="средняя" data-district="елабужский" data-category>
+          <h4>Малый бор</h4>
+          <div class="trail-item__meta"><span>📏 10.4 км</span><span>⚡ средняя</span><span>📍 Елабужский</span></div>
+          <p>Родник «Святой ключ», смотровая площадка.</p>
+          <button class="btn-hero btn-outline btn-sm js-detail" style="margin-top:.8rem;width:100%" data-detail="maly-bor-trail">Подробнее</button>
+        </article>
+
+        <div class="js-empty hidden" style="text-align:center;padding:2rem;color:var(--muted);font-size:.95rem">
+          🔍 Ничего не найдено. Измените фильтры.
+        </div>
+      </aside>
+
+      <!-- КАРТА -->
+      <div id="map"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== ПРАВИЛА ==================== -->
+<section class="section">
+  <div class="container">
+    <div class="section-head" data-aos="fade-up">
+      <div style="font-size:.72rem;letter-spacing:.3em;text-transform:uppercase;color:var(--green-700);font-weight:800;margin-bottom:.8rem">На маршруте</div>
+      <h2 class="giant">Правила <em style="font-style:italic">поведения</em></h2>
+      <p style="font-size:1.05rem;margin-top:1rem;max-width:640px">На экотропах действуют особые правила. Их соблюдение сохраняет природу для следующих путешественников.</p>
+    </div>
+
+    <div class="grid grid-3">
+      <div class="feat-card" data-aos="fade-up">
+        <div class="feat-card__icon">🥾</div>
+        <h3>Ходить по тропе</h3>
+        <p>Не срезайте путь — вытаптывание разрушает почвенный покров и восстанавливается годами.</p>
+      </div>
+      <div class="feat-card" data-aos="fade-up" data-aos-delay="100">
+        <div class="feat-card__icon">🚯</div>
+        <h3>Забирать мусор</h3>
+        <p>На большинстве троп нет контейнеров. Принцип «ноль отходов» — ваш вклад в чистоту.</p>
+      </div>
+      <div class="feat-card" data-aos="fade-up" data-aos-delay="200">
+        <div class="feat-card__icon">🎫</div>
+        <h3>Согласовать визит</h3>
+        <p>Часть троп — на территории заказников. Посещение требует согласования с администрацией.</p>
+      </div>
+      <div class="feat-card" data-aos="fade-up">
+        <div class="feat-card__icon">🐾</div>
+        <h3>Не беспокоить животных</h3>
+        <p>Соблюдайте тишину, не кормите диких животных, держите собак на поводке.</p>
+      </div>
+      <div class="feat-card" data-aos="fade-up" data-aos-delay="100">
+        <div class="feat-card__icon">🔥</div>
+        <h3>Не разводить костры</h3>
+        <p>В пожароопасный сезон — полный запрет. В остальное время — только в оборудованных местах.</p>
+      </div>
+      <div class="feat-card" data-aos="fade-up" data-aos-delay="200">
+        <div class="feat-card__icon">📞</div>
+        <h3>Сообщать о ЧП</h3>
+        <p>Браконьерство, свалка, пожар — звоните в Госкомитет РТ: +7 (843) 267-68-67</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== CTA ==================== -->
+<section class="section section--tight">
+  <div class="container">
+    <div class="cta" data-aos="zoom-in">
+      <div>
+        <h2 class="giant">Планируйте<br>по <em style="font-style:italic">ООПТ</em></h2>
+        <p>Все заповедники, заказники и памятники природы в одном каталоге с режимом посещения и контактами.</p>
+      </div>
+      <div class="cta__actions">
+        <a href="oopt.html" class="btn-hero btn-white">🌲 Карта ООПТ</a>
+        <a href="calendar.html" class="btn-hero btn-glass">📅 События</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== FOOTER ==================== -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo">🌿 EcoTatarstan</div>
+        <p>Цифровая платформа экотуризма и эковолонтёрства Республики Татарстан.</p>
+      </div>
+      <div>
+        <h4>Навигация</h4>
+        <ul>
+          <li><a href="index.html">Главная</a></li>
+          <li><a href="map.html">Карта троп</a></li>
+          <li><a href="oopt.html">Карта ООПТ</a></li>
+          <li><a href="calendar.html">Календарь</a></li>
+          <li><a href="volunteer.html">Волонтёрство</a></li>
+          <li><a href="about.html">О проекте</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Контакты</h4>
+        <ul>
+          <li>📞 <a href="tel:+78430000000">+7 (843) 000-00-00</a></li>
+          <li>✉️ <a href="mailto:info@ecotatarstan.ru">info@ecotatarstan.ru</a></li>
+          <li>📍 г. Казань, ул. Зелёная, 15</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">© 2026 ЭкоТатарстан.</div>
+  </div>
+</footer>
+
+<!-- ==================== MOBILE NAV ==================== -->
+<div class="mobile-nav" id="mobileNav">
+  <a href="index.html">Главная</a>
+  <a href="map.html">Карта троп</a>
+  <a href="oopt.html">ООПТ</a>
+  <a href="calendar.html">Календарь</a>
+  <a href="volunteer.html">Волонтёрство</a>
+  <a href="about.html">О проекте</a>
+</div>
+
+<!-- ==================== MODAL ==================== -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="modal__head">
+      <h3 class="modal__title" id="detailTitle" style="font-size:1.5rem;font-weight:900">Подробнее</h3>
+      <button class="modal__close" aria-label="Закрыть">✕</button>
+    </div>
+    <div id="detailBody"></div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+  window.TRAILS = [
+    { id:'dolgaya', name:'Долгая Поляна', lat:54.74, lng:48.81, difficulty:'лёгкая', district:'Тетюшский', length:'1.5 км', desc:'Две аллеи 130-летних лиственниц, обрыв над Волгой.' },
+    { id:'bay-urmany', name:'Путешествие в Бай Урманы', lat:54.98, lng:48.25, difficulty:'лёгкая', district:'Буинский', length:'2 км', desc:'150 вековых деревьев: липы, сосны-богатыри, берёзы.' },
+    { id:'barsky', name:'Прогулка по Барскому парку', lat:56.47, lng:50.20, difficulty:'лёгкая', district:'Балтасинский', length:'1.5 км', desc:'Интерактивная лаборатория под открытым небом.' },
+    { id:'chulpan', name:'Прикоснись к природе', lat:55.80, lng:49.20, difficulty:'лёгкая', district:'Высокогорский', length:'1 км', desc:'Заказник «Чулпан», скамейки, звуки леса.' },
+    { id:'stepnoy', name:'По тропинкам Степного', lat:54.57, lng:52.50, difficulty:'средняя', district:'Лениногорский', length:'2 км', desc:'Сосновый бор, муравьи, совы, сурки-байбаки.' },
+    { id:'korabelnaya', name:'Корабельная роща', lat:55.76, lng:52.05, difficulty:'лёгкая', district:'Елабужский', length:'1 км', desc:'НП «Нижняя Кама», история Боровецкого леса.' },
+    { id:'maly-bor', name:'Малый бор', lat:55.73, lng:52.08, difficulty:'средняя', district:'Елабужский', length:'10.4 км', desc:'Родник «Святой ключ», смотровая площадка.' }
+  ];
+
+  window.DETAIL_DATA = {
+    'dolgaya-trail': {
+      title: 'Экотропа «Долгая Поляна»',
+      image: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1200&q=80',
+      meta: ['📍 Тетюшский район', '📏 1.5 км', '⚡ лёгкая', '⏱ 1 час'],
+      description: 'Экологическая тропа на территории государственного природного заказника «Долгая Поляна». Здесь растут 246 лиственниц, которым больше 130 лет — они выстроены в две аллеи, ведущие к обрыву над Волгой.',
+      details: [
+        'Прогулка по аллее 130-летних лиственниц',
+        'Выход к обрыву над Волгой',
+        'Наблюдение за жуками-оленями (длина до 7.5 см)',
+        'Знакомство с дендропарком, спускающимся террасами к воде',
+        'Фотосессия на смотровой площадке'
+      ],
+      rules: 'Посещение по согласованию с администрацией заказника. Не сходите с тропы, не шумите, не мусорите.',
+      contact: 'Госкомитет РТ по биоресурсам: +7 (843) 267-68-67'
+    },
+    'bay-urmany-trail': {
+      title: 'Экотропа «Путешествие в Бай Урманы»',
+      image: 'https://images.unsplash.com/photo-1511497584788-876760111969?w=1200&q=80',
+      meta: ['📍 Буинский район', '📏 2 км', '⚡ лёгкая', '⏱ 1.5 часа'],
+      description: 'Тропа проходит по парку имени Ивашева в Буинском районе. Здесь растут 150 вековых деревьев: преимущественно липы, а также три сосны-богатыря, две берёзы и одна ива.',
+      details: [
+        'Прогулка среди 150 вековых деревьев',
+        'Знакомство с липами, соснами-богатырями, берёзами',
+        'Наблюдение за птицами и белками',
+        'Фотосессия у старейших деревьев',
+        'Пикник на оборудованной площадке'
+      ],
+      rules: 'Посещение по согласованию с администрацией. Соблюдайте тишину, не повреждайте кору деревьев.',
+      contact: 'Госкомитет РТ по биоресурсам: +7 (843) 267-68-67'
+    },
+    'barsky-trail': {
+      title: 'Экотропа «Прогулка по Барскому парку»',
+      image: 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=1200&q=80',
+      meta: ['📍 Балтасинский район', '📏 1.5 км', '⚡ лёгкая', '⏱ 1 час'],
+      description: 'Интерактивная экологическая тропа в Балтасинском районе, представляющая собой настоящую лабораторию под открытым небом. Здесь можно изучать растения и животных в естественной среде.',
+      details: [
+        'Интерактивные станции для изучения природы',
+        'Наблюдение за растениями и насекомыми',
+        'Знакомство с местной флорой и фауной',
+        'Экологические игры для детей',
+        'Обустроенные места для отдыха'
+      ],
+      rules: 'Посещение по согласованию с администрацией. Не срывайте растения, не ловите насекомых.',
+      contact: 'Госкомитет РТ по биоресурсам: +7 (843) 267-68-67'
+    },
+    'chulpan-trail': {
+      title: 'Экотропа «Прикоснись к природе»',
+      image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=80',
+      meta: ['📍 Высокогорский район', '📏 1 км', '⚡ лёгкая', '⏱ 45 минут'],
+      description: 'Экологическая тропа на территории государственного природного заказника «Чулпан» имени А.П. Пухачева. Это место создано для тихого отдыха на природе.',
+      details: [
+        'Прогулка по оборудованной тропе',
+        'Отдых на скамейках среди леса',
+        'Наблюдение за птицами и белками',
+        'Знакомство с растениями заказника',
+        'Медитативная практика «слушание леса»'
+      ],
+      rules: 'Посещение по согласованию с администрацией. Соблюдайте тишину, не сходите с тропы.',
+      contact: 'Госкомитет РТ по биоресурсам: +7 (843) 267-68-67'
+    },
+    'stepnoy-trail': {
+      title: 'Экотропа «По тропинкам заказника Степной»',
+      image: 'https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?w=1200&q=80',
+      meta: ['📍 Лениногорский район', '📏 2 км', '⚡ средняя', '⏱ 2 часа'],
+      description: 'Экологическая тропа на территории государственного природного заказника «Степной» имени А.И. Щеповских. Здесь можно увидеть сосновый бор, огромный муравьиный город, сов и степного сурка-байбака.',
+      details: [
+        'Прогулка по сосновому бору',
+        'Наблюдение за муравьиным городом',
+        'Знакомство с совами и другими птицами',
+        'Наблюдение за степным сурком-байбаком',
+        'Лекция о биоразнообразии степной зоны'
+      ],
+      rules: 'Посещение по согласованию с администрацией. Возьмите бинокль. Не приближайтесь к суркам.',
+      contact: 'Госкомитет РТ по биоресурсам: +7 (843) 267-68-67'
+    },
+    'korabelnaya-trail': {
+      title: 'Экотропа «Корабельная роща»',
+      image: 'https://images.unsplash.com/photo-1418065460487-3e41a6c84dc5?w=1200&q=80',
+      meta: ['📍 Елабужский район', '📏 1 км', '⚡ лёгкая', '⏱ 1 час'],
+      description: 'Экологическая тропа на территории национального парка «Нижняя Кама». Маршрут знакомит с историей Боровецкой Корабельной рощи, природными достопримечательностями Боровецкого леса.',
+      details: [
+        'Знакомство с историей Корабельной рощи',
+        'Прогулка по вековому сосновому лесу',
+        'Информационные стенды и интерактивные элементы',
+        'Наблюдение за птицами и животными',
+        'Посещение визит-центра национального парка'
+      ],
+      rules: 'Посещение по согласованию с администрацией НП. Не сходите с тропы, не мусорите.',
+      contact: 'НП «Нижняя Кама»: +7 (8555) 71-23-45'
+    },
+    'maly-bor-trail': {
+      title: 'Экотропа «Малый бор»',
+      image: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1200&q=80',
+      meta: ['📍 Елабужский район', '📏 10.4 км', '⚡ средняя', '⏱ 3–4 часа'],
+      description: 'Экологическая тропа на территории национального парка «Нижняя Кама». Маршрут проходит по туристскому комплексу «Малый бор», включая посещение родника «Святой ключ».',
+      details: [
+        'Прогулка по старинной дороге Елабуга — окрестные деревни',
+        'Посещение родника «Святой ключ»',
+        'Смотровая площадка для наблюдения за флорой и фауной',
+        'Знакомство со стоянками древних людей бронзового века',
+        'Возможность велопрогулки или лыжной прогулки зимой'
+      ],
+      rules: 'Посещение по согласованию с администрацией НП. Информационные стенды расскажут о правилах.',
+      contact: 'НП «Нижняя Кама»: +7 (8555) 71-23-45'
+    }
+  };
+</script>
+<script src="script.js"></script>
+</body>
+</html>

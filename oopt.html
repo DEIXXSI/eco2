@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Карта ООПТ — ЭкоТатарстан</title>
+<meta name="description" content="Интерактивная карта особо охраняемых природных территорий Республики Татарстан: заповедники, заказники, памятники природы.">
+<meta name="theme-color" content="#0d2818">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = { theme: { extend: {
+    colors: { green900:'#1b4332', green800:'#0d2818', green700:'#2d6a4f', green500:'#40916c', green300:'#74c69d', green100:'#d8f3dc', sand:'#f4f1de', cream:'#f5f1e8', ink:'#1b1b1b' },
+    fontFamily: { sans: ['Inter','system-ui','sans-serif'] }
+  }}}
+</script>
+<link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
+<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="styles.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>">
+</head>
+<body class="bg-white">
+
+<header class="site-header" style="position:fixed;top:0;left:0;right:0;z-index:50;background:rgba(13,40,24,.85);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.08);padding:.9rem 0">
+  <div class="container-wide" style="display:flex;align-items:center;justify-content:space-between;gap:1.5rem">
+    <a href="index.html" class="logo-plate">
+      <div class="logo-plate__main">🌿 EcoTatarstan</div>
+      <div class="logo-plate__sub">Платформа 2026</div>
+    </a>
+    <nav class="hero-nav__menu">
+      <a href="index.html">Главная</a>
+      <a href="map.html">Карта троп</a>
+      <a href="oopt.html" class="active">ООПТ</a>
+      <a href="calendar.html">Календарь</a>
+      <a href="volunteer.html">Волонтёрство</a>
+      <a href="about.html">О проекте</a>
+    </nav>
+    <button class="burger-round" id="burger" aria-label="Меню"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="fullhero" style="min-height:80vh;padding-top:8rem;padding-bottom:5rem">
+  <div class="fullhero__bg" style="background-image:url('https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=1920&q=80')"></div>
+  <div class="fullhero__overlay"></div>
+  <div class="noise-overlay"></div>
+
+  <div class="fullhero__content container-wide">
+    <div style="margin-top:2rem" class="hero-anim-2">
+      <div style="font-size:.72rem;letter-spacing:.3em;text-transform:uppercase;color:rgba(255,255,255,.7);font-weight:800;margin-bottom:1rem">Особо охраняемые природные территории</div>
+      <h1 class="giant" style="color:#fff;font-size:clamp(3rem,8vw,6.5rem)">
+        Карта <em style="font-style:italic">ООПТ</em><br>
+        Татарстана
+      </h1>
+      <p style="color:rgba(255,255,255,.85);max-width:680px;margin-top:1.5rem;font-size:1.1rem">
+        В Татарстане насчитывается 200 особо охраняемых природных территорий, включая 2 заповедника, 1 национальный парк, десятки заказников и памятников природы.
+      </p>
+    </div>
+
+    <div class="oopt-stats hero-anim-5" style="margin-top:3rem;max-width:900px">
+      <div class="oopt-stat">
+        <div class="oopt-stat__num">200</div>
+        <div class="oopt-stat__label">ООПТ</div>
+      </div>
+      <div class="oopt-stat">
+        <div class="oopt-stat__num">2</div>
+        <div class="oopt-stat__label">заповедника</div>
+      </div>
+      <div class="oopt-stat">
+        <div class="oopt-stat__num">26</div>
+        <div class="oopt-stat__label">на Волжской тропе</div>
+      </div>
+      <div class="oopt-stat">
+        <div class="oopt-stat__num">5</div>
+        <div class="oopt-stat__label">новых экотроп</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ФИЛЬТРЫ + КАРТА -->
+<section class="section section--cream">
+  <div class="container-wide">
+
+    <div class="filters" data-aos="fade-up" style="flex-direction:column;align-items:stretch">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem">
+        <div class="field">
+          <label>Категория ООПТ</label>
+          <select data-filter="category">
+            <option value="">Все категории</option>
+            <option value="заповедник">🌲 Заповедник</option>
+            <option value="национальный парк">🏞️ Национальный парк</option>
+            <option value="заказник">🦌 Заказник</option>
+            <option value="памятник природы">💧 Памятник природы</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Район</label>
+          <select data-filter="district">
+            <option value="">Все районы</option>
+            <option value="тетюшский">Тетюшский</option>
+            <option value="буинский">Буинский</option>
+            <option value="балтасинский">Балтасинский</option>
+            <option value="высокогорский">Высокогорский</option>
+            <option value="лениногорский">Лениногорский</option>
+            <option value="зеленодольский">Зеленодольский</option>
+            <option value="елабужский">Елабужский</option>
+            <option value="верхнеуслонский">Верхнеуслонский</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Поиск</label>
+          <input type="text" data-filter="search" placeholder="Название ООПТ…">
+        </div>
+      </div>
+
+      <div style="margin-top:1rem">
+        <label style="display:block;font-size:.85rem;font-weight:700;color:var(--green-900);margin-bottom:.6rem">Режим посещения</label>
+        <div class="checkbox-group">
+          <label class="checkbox">
+            <input type="checkbox" data-filter="access" value="свободный">
+            <span>✓ Свободное посещение</span>
+          </label>
+          <label class="checkbox">
+            <input type="checkbox" data-filter="access" value="по пропуску">
+            <span>🎫 По пропуску</span>
+          </label>
+          <label class="checkbox">
+            <input type="checkbox" data-filter="access" value="закрытый">
+            <span>🔒 Закрыт для туристов</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div class="map-layout" data-aos="fade-up" style="grid-template-columns:400px 1fr">
+
+      <!-- СПИСОК ООПТ -->
+      <aside class="trail-list" style="max-height:720px">
+        <div style="padding:.5rem .6rem 1rem;border-bottom:1px solid rgba(45,106,79,.08);margin-bottom:1rem">
+          <div style="font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;font-weight:800;color:rgba(27,27,27,.5)">Объекты</div>
+          <div id="ooptCount" style="font-size:1.4rem;font-weight:900;color:var(--green-900);margin-top:.3rem">10 ООПТ</div>
+        </div>
+
+        <article class="oopt-item" data-id="dolgaya" data-category="заказник" data-district="тетюшский" data-access="по пропуску" data-category-item>
+          <div class="oopt-item__head">
+            <div class="oopt-item__icon" style="background:#d8f3dc">🌲</div>
+            <h4>Заказник «Долгая Поляна»</h4>
+          </div>
+          <p style="font-size:.82rem;color:var(--muted)">246 лиственниц возрастом 130+ лет, обрыв над Волгой.</p>
+          <div class="oopt-item__meta"><span>📍 Тетюшский</span><span>🎫 по пропуску</span></div>
+          <button class="btn-hero btn-outline btn-sm js-detail" style="margin-top:.8rem;width:100%" data-detail="dolgaya-oopt">Подробнее</button>
+        </article>
+
+        <article class="oopt-item" data-id="chulpan" data-category="заказник" data-district="высокогорский" data-access="по пропуску" data-category-item>
+          <div class="oopt-item__head">
+            <div class="oopt-item__icon" style="background:#d8f3dc">🦌</div>
+            <h4>Заказник «Чулпан»</h4>
+          </div>
+          <p style="font-size:.82rem;color:var(--muted)">Экотропа «Прикоснись к природе», тихий отдых на природе.</p>
+          <div class="oopt-item__meta"><span>📍 Высокогорский</span><span>🎫 по пропуску</span></div>
+          <button class="btn-hero btn-outline btn-sm js-detail" style="margin-top:.8rem;width:100%" data-detail="chulpan-oopt">Подробнее</button>
+        </article>
+
+        <article class="oopt-item" data-id="stepnoy" data-category="заказник" data-district="лениногорский" data-access="по пропуску" data-category-item>
+          <div class="oopt-item__head">
+            <div class="oopt-item__icon" style="background:#d8f3dc">🦌</div>
+            <h4>Заказник «Степной»</h4>
+          </div>
+          <p style="font-size:.82rem;color:var(--muted)">Сурки-байбаки, совы, сосновый бор, муравьиные города.</p>
+          <div class="oopt-item__meta"><span>📍 Лениногорский</span><span>🎫 по пропуску</span></div>
+          <button class="btn-hero btn-outline btn-sm js-detail" style="margin-top:.8rem;width:100%" data-detail="stepnoy-oopt">Подробнее</button>
+        </article>
+
+        <article class="oopt-item" data-id="baltasinsky" data-category="заказник" data-district="балтасинский" data-access="по пропуску" data-category-item>
+          <div class="oopt-item__head">
+            <div class="oopt-item__icon" style="background:#d8f3dc">🦌</div>
+            <h4>Заказник «Балтасинский»</h4>
+          </div>
+          <p style="font-size:.82rem;color:var(--muted)">Экотропа «Прогулка по Барскому парку».</p>
+          <div class="oopt-item__meta"><span>📍 Балтасинский</span><span>🎫 по пропуску</span></div>
+          <button class="btn-hero btn-outline btn-sm js-detail" style="margin-top:.8rem;width:100%" data-detail="baltasinsky-oopt">Подробнее</button>
+        </article>
+
+        <article class="oopt-item" data-id="zeya" data-category="заказник" data-district="буинский" data-access="по пропуску" data-category-item>
+          <div class="oopt-item__head">
+            <div class="oopt-item__icon" style="background:#d8f3dc">🦌</div>
+            <h4>Заказник «Зея буйлары»</h4>
+          </div>
+          <p style="font-size:.82rem;color:var(--muted)">Экотропа «Путешествие в Бай Урманы».</p>
+          <div class="oopt-item__meta"><span>📍 Буинский</span><span>🎫 по пропуску</span></div>
+          <button class="btn-hero btn-outline btn-sm js-detail" style="margin-top:.8rem;width:100%" data-detail="zeya-oopt">Подробнее</button>
+        </article>
+
+        <article class="oopt-item" data-id="vkgpbz" data-category="заповедник" data-district="зеленодольский" data-access="по пропуску" data-category-item>
+          <div class="oopt-item__head">
+            <div class="oopt-item__icon" style="background:#d8f3dc">🌲</div>
+            <h4>Волжско-Камский заповедник</h4>
+          </div>
+          <p style="font-size:.82rem;color:var(--muted)">Раифский и Сараловский участки, дендрарий, Музей природы.</p>
+          <div class="oopt-item__meta"><span>📍 Зеленодольский</span><span>🎫 по пропуску</span></div>
+          <button class="btn-hero btn-outline btn-sm js-detail" style="margin-top:.8rem;width:100%" data-detail="vkgpbz-oopt">Подробнее</button>
+        </article>
+
+        <article class="oopt-item" data-id="nizhnyaya-kama" data-category="национальный парк" data-district="елабужский" data-access="свободный" data-category-item>
+          <div class="oopt-item__head">
+            <div class="oopt-item__icon" style="background:#d8f3dc">🏞️</div>
+            <h4>Национальный парк «Нижняя Кама»</h4>
+          </div>
+          <p style="font-size:.82rem;color:var(--muted)">Экотропы «Корабельная роща», «Малый бор», музей природы.</p>
+          <div class="oopt-item__meta"><span>📍 Елабужский</span><span>✅ свободный</span></div>
+          <button class="btn-hero btn-outline btn-sm js-detail" style="margin-top:.8rem;width:100%" data-detail="nizhnyaya-kama-oopt">Подробнее</button>
+        </article>
+
+        <article class="oopt-item" data-id="volzhskie-prostory" data-category="заказник" data-district="верхнеуслонский" data-access="свободный" data-category-item>
+          <div class="oopt-item__head">
+            <div class="oopt-item__icon" style="background:#d8f3dc">🦌</div>
+            <h4>Заказник «Волжские просторы»</h4>
+          </div>
+          <p style="font-size:.82rem;color:var(--muted)">Крупнейший заказник на Волге, 29 000 га, 4 района.</p>
+          <div class="oopt-item__meta"><span>📍 Верхнеуслонский</span><span>✅ свободный</span></div>
+          <button class="btn-hero btn-outline btn-sm js-detail" style="margin-top:.8rem;width:100%" data-detail="volzhskie-prostory-oopt">Подробнее</button>
+        </article>
+
+        <article class="oopt-item" data-id="golubye-ozera" data-category="памятник природы" data-district="казань" data-access="свободный" data-category-item>
+          <div class="oopt-item__head">
+            <div class="oopt-item__icon" style="background:#d8f3dc">💧</div>
+            <h4>Голубые озёра</h4>
+          </div>
+          <p style="font-size:.82rem;color:var(--muted)">Система карстовых озёр с чистейшей водой.</p>
+          <div class="oopt-item__meta"><span>📍 Казань</span><span>✅ свободный</span></div>
+          <button class="btn-hero btn-outline btn-sm js-detail" style="margin-top:.8rem;width:100%" data-detail="golubye-oopt">Подробнее</button>
+        </article>
+
+        <article class="oopt-item" data-id="lebyazhye" data-category="памятник природы" data-district="казань" data-access="свободный" data-category-item>
+          <div class="oopt-item__head">
+            <div class="oopt-item__icon" style="background:#d8f3dc">💧</div>
+            <h4>Лесопарк «Лебяжье»</h4>
+          </div>
+          <p style="font-size:.82rem;color:var(--muted)">Экотропа «Маршрут Ежа», 300 видов растений.</p>
+          <div class="oopt-item__meta"><span>📍 Казань</span><span>✅ свободный</span></div>
+          <button class="btn-hero btn-outline btn-sm js-detail" style="margin-top:.8rem;width:100%" data-detail="lebyazhye-oopt">Подробнее</button>
+        </article>
+
+        <div class="js-empty hidden" style="text-align:center;padding:2rem;color:var(--muted);font-size:.95rem">
+          🔍 Ничего не найдено.
+        </div>
+      </aside>
+
+      <!-- КАРТА -->
+      <div style="position:relative;border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);min-height:720px">
+        <div id="ooptMap" style="position:absolute;inset:0;z-index:0"></div>
+        <div class="legend">
+          <div style="font-size:.72rem;font-weight:900;text-transform:uppercase;letter-spacing:.1em;margin-bottom:.7rem;color:var(--ink)">Категории</div>
+          <div class="legend__row"><div class="legend__dot" style="background:#1b4332"></div><span>Заповедник</span></div>
+          <div class="legend__row"><div class="legend__dot" style="background:#40916c"></div><span>Нац. парк</span></div>
+          <div class="legend__row"><div class="legend__dot" style="background:#74c69d"></div><span>Заказник</span></div>
+          <div class="legend__row"><div class="legend__dot" style="background:#f4a261"></div><span>Памятник природы</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- КАТЕГОРИИ -->
+<section class="section">
+  <div class="container">
+    <div class="section-head" data-aos="fade-up">
+      <div style="font-size:.72rem;letter-spacing:.3em;text-transform:uppercase;color:var(--green-700);font-weight:800;margin-bottom:.8rem">Классификация</div>
+      <h2 class="giant">Четыре <em style="font-style:italic">категории</em></h2>
+      <p style="font-size:1.05rem;margin-top:1rem;max-width:640px">В Татарстане действуют 4 категории особо охраняемых природных территорий — от строгих заповедников до памятников природы.</p>
+    </div>
+
+    <div class="grid grid-4">
+      <div class="feat-card" data-aos="fade-up">
+        <div class="feat-card__icon" style="background:#1b4332;color:#fff">🌲</div>
+        <div style="font-size:.7rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#1b4332;margin-bottom:.4rem">Категория I</div>
+        <h3>Заповедник</h3>
+        <p>Полностью изъят из хозяйственного использования. Посещение — только по пропускам и в сопровождении сотрудников.</p>
+        <div style="margin-top:1rem;font-size:.85rem;font-weight:800;color:var(--green-700)">2 объекта</div>
+      </div>
+
+      <div class="feat-card" data-aos="fade-up" data-aos-delay="100">
+        <div class="feat-card__icon" style="background:#40916c;color:#fff">🏞️</div>
+        <div style="font-size:.7rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#40916c;margin-bottom:.4rem">Категория II</div>
+        <h3>Национальный парк</h3>
+        <p>Сочетает охрану природы с регулируемым туризмом. Есть зоны свободного посещения и заповедные зоны.</p>
+        <div style="margin-top:1rem;font-size:.85rem;font-weight:800;color:var(--green-700)">1 объект</div>
+      </div>
+
+      <div class="feat-card" data-aos="fade-up" data-aos-delay="200">
+        <div class="feat-card__icon" style="background:#74c69d;color:#fff">🦌</div>
+        <div style="font-size:.7rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#40916c;margin-bottom:.4rem">Категория III</div>
+        <h3>Заказник</h3>
+        <p>Территория с частичным ограничением хозяйственной деятельности. Обычно — для сохранения охотничьих видов.</p>
+        <div style="margin-top:1rem;font-size:.85rem;font-weight:800;color:var(--green-700)">15 объектов</div>
+      </div>
+
+      <div class="feat-card" data-aos="fade-up" data-aos-delay="300">
+        <div class="feat-card__icon" style="background:#f4a261;color:#fff">💧</div>
+        <div style="font-size:.7rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#e07a1f;margin-bottom:.4rem">Категория IV</div>
+        <h3>Памятник природы</h3>
+        <p>Уникальный природный объект: озеро, лесной массив, геологическое обнажение. Обычно свободен для посещения.</p>
+        <div style="margin-top:1rem;font-size:.85rem;font-weight:800;color:var(--green-700)">8 объектов</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- РЕЖИМ ПОСЕЩЕНИЯ -->
+<section class="section section--cream">
+  <div class="container">
+    <div class="split">
+      <div class="split__img" data-aos="fade-right">
+        <img src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&q=80" alt="Природа Татарстана">
+      </div>
+      <div data-aos="fade-left">
+        <div style="font-size:.72rem;letter-spacing:.3em;text-transform:uppercase;color:var(--green-700);font-weight:800;margin-bottom:.8rem">Важно знать</div>
+        <h2 class="giant" style="margin-bottom:1.2rem">Режим <em style="font-style:italic">посещения</em></h2>
+        <p style="font-size:1.05rem;margin-bottom:1.5rem">
+          Правила зависят от категории ООПТ. Прежде чем отправиться, узнайте режим конкретной территории.
+        </p>
+        <ul style="display:flex;flex-direction:column;gap:1.2rem">
+          <li style="display:flex;gap:1rem">
+            <span style="width:44px;height:44px;border-radius:14px;background:var(--green-100);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.2rem">✅</span>
+            <div>
+              <div style="font-weight:800;margin-bottom:.2rem">Свободное посещение</div>
+              <p style="font-size:.9rem">Заказники и большинство памятников природы. Соблюдайте общие правила поведения на природе.</p>
+            </div>
+          </li>
+          <li style="display:flex;gap:1rem">
+            <span style="width:44px;height:44px;border-radius:14px;background:var(--green-100);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.2rem">🎫</span>
+            <div>
+              <div style="font-weight:800;margin-bottom:.2rem">По пропуску</div>
+              <p style="font-size:.9rem">Заповедники и отдельные участки нацпарков. Пропуск оформляется через администрацию или онлайн.</p>
+            </div>
+          </li>
+          <li style="display:flex;gap:1rem">
+            <span style="width:44px;height:44px;border-radius:14px;background:var(--green-100);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.2rem">🔒</span>
+            <div>
+              <div style="font-weight:800;margin-bottom:.2rem">Закрыт для туристов</div>
+              <p style="font-size:.9rem">Заповедные зоны, где ведутся научные исследования. Посещение запрещено даже с пропуском.</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="section section--tight">
+  <div class="container">
+    <div class="cta" data-aos="zoom-in">
+      <div>
+        <h2 class="giant">Помоги сохранить<br><em style="font-style:italic">ООПТ</em></h2>
+        <p>Волонтёры помогают заповедникам и заказникам: обустраивают тропы, ведут учёты, патрулируют территории.</p>
+      </div>
+      <div class="cta__actions">
+        <a href="volunteer.html" class="btn-hero btn-white">🤝 Стать волонтёром</a>
+        <a href="map.html" class="btn-hero btn-glass">🗺️ Карта троп</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo">🌿 EcoTatarstan</div>
+        <p>Цифровая платформа экотуризма и эковолонтёрства Республики Татарстан.</p>
+      </div>
+      <div>
+        <h4>Навигация</h4>
+        <ul>
+          <li><a href="index.html">Главная</a></li>
+          <li><a href="map.html">Карта троп</a></li>
+          <li><a href="oopt.html">Карта ООПТ</a></li>
+          <li><a href="calendar.html">Календарь</a></li>
+          <li><a href="volunteer.html">Волонтёрство</a></li>
+          <li><a href="about.html">О проекте</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Контакты</h4>
+        <ul>
+          <li>📞 <a href="tel:+78430000000">+7 (843) 000-00-00</a></li>
+          <li>✉️ <a href="mailto:info@ecotatarstan.ru">info@ecotatarstan.ru</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">© 2026 ЭкоТатарстан.</div>
+  </div>
+</footer>
+
+<div class="mobile-nav" id="mobileNav">
+  <a href="index.html">Главная</a>
+  <a href="map.html">Карта троп</a>
+  <a href="oopt.html">ООПТ</a>
+  <a href="calendar.html">Календарь</a>
+  <a href="volunteer.html">Волонтёрство</a>
+  <a href="about.html">О проекте</a>
+</div>
+
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="modal__head">
+      <h3 class="modal__title" id="detailTitle" style="font-size:1.5rem;font-weight:900">Подробнее</h3>
+      <button class="modal__close" aria-label="Закрыть">✕</button>
+    </div>
+    <div id="detailBody"></div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+  window.OOPT = [
+    { id:'dolgaya', name:'Заказник «Долгая Поляна»', category:'заказник', district:'Тетюшский', area:'—', access:'по пропуску', lat:54.74, lng:48.81, icon:'🌲', color:'#74c69d', desc:'246 лиственниц возрастом 130+ лет, обрыв над Волгой.' },
+    { id:'chulpan', name:'Заказник «Чулпан»', category:'заказник', district:'Высокогорский', area:'—', access:'по пропуску', lat:55.80, lng:49.20, icon:'🦌', color:'#74c69d', desc:'Экотропа «Прикоснись к природе».' },
+    { id:'stepnoy', name:'Заказник «Степной»', category:'заказник', district:'Лениногорский', area:'—', access:'по пропуску', lat:54.57, lng:52.50, icon:'🦌', color:'#74c69d', desc:'Сурки-байбаки, совы, сосновый бор.' },
+    { id:'baltasinsky', name:'Заказник «Балтасинский»', category:'заказник', district:'Балтасинский', area:'—', access:'по пропуску', lat:56.47, lng:50.20, icon:'🦌', color:'#74c69d', desc:'Экотропа «Прогулка по Барскому парку».' },
+    { id:'zeya', name:'Заказник «Зея буйлары»', category:'заказник', district:'Буинский', area:'—', access:'по пропуску', lat:54.98, lng:48.25, icon:'🦌', color:'#74c69d', desc:'Экотропа «Путешествие в Бай Урманы».' },
+    { id:'vkgpbz', name:'Волжско-Камский заповедник', category:'заповедник', district:'Зеленодольский', area:'10 091 га', access:'по пропуску', lat:55.90, lng:48.73, icon:'🌲', color:'#1b4332', desc:'Раифский и Сараловский участки, дендрарий.' },
+    { id:'nizhnyaya-kama', name:'НП «Нижняя Кама»', category:'национальный парк', district:'Елабужский', area:'26 601 га', access:'свободный', lat:55.76, lng:52.05, icon:'🏞️', color:'#40916c', desc:'Экотропы «Корабельная роща», «Малый бор».' },
+    { id:'volzhskie-prostory', name:'Заказник «Волжские просторы»', category:'заказник', district:'Верхнеуслонский', area:'29 000 га', access:'свободный', lat:55.68, lng:48.95, icon:'🦌', color:'#74c69d', desc:'Крупнейший заказник на Волге.' },
+    { id:'golubye', name:'Голубые озёра', category:'памятник природы', district:'Казань', area:'200 га', access:'свободный', lat:55.89, lng:49.15, icon:'💧', color:'#f4a261', desc:'Система карстовых озёр.' },
+    { id:'lebyazhye', name:'Лесопарк «Лебяжье»', category:'памятник природы', district:'Казань', area:'360 га', access:'свободный', lat:55.74, lng:49.28, icon:'💧', color:'#f4a261', desc:'Экотропа «Маршрут Ежа».' }
+  ];
+
+  window.DETAIL_DATA = {
+    'dolgaya-oopt': {
+      title: 'Заказник «Долгая Поляна»',
+      image: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1200&q=80',
+      meta: ['📍 Тетюшский район', '🌲 Заказник', '🎫 по пропуску'],
+      description: 'Государственный природный заказник «Долгая Поляна» — одна из старейших ООПТ Татарстана. Знаменит аллеями 130-летних лиственниц и дендропарком, спускающимся террасами к Волге.',
+      details: [
+        '246 лиственниц, выстроенных в две аллеи',
+        'Обрыв над Волгой с панорамным видом',
+        'Обитание жуков-оленей (до 7.5 см длиной)',
+        'Дендропарк с террасами',
+        'Экскурсии по предварительной заявке'
+      ],
+      rules: 'Посещение по согласованию с администрацией. Не сходите с тропы, не шумите, не мусорите.',
+      contact: 'Госкомитет РТ по биоресурсам: +7 (843) 267-68-67'
+    },
+    'chulpan-oopt': {
+      title: 'Заказник «Чулпан»',
+      image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=80',
+      meta: ['📍 Высокогорский район', '🦌 Заказник', '🎫 по пропуску'],
+      description: 'Государственный природный заказник «Чулпан» имени А.П. Пухачева. Здесь обустроена экотропа «Прикоснись к природе» для тихого отдыха на природе.',
+      details: [
+        'Экотропа с информационными стендами',
+        'Скамейки для отдыха среди леса',
+        'Наблюдение за птицами и белками',
+        'Медитативные практики «слушание леса»',
+        'Доступ для людей с ограниченными возможностями'
+      ],
+      rules: 'Посещение по согласованию с администрацией. Соблюдайте тишину, не сходите с тропы.',
+      contact: 'Госкомитет РТ по биоресурсам: +7 (843) 267-68-67'
+    },
+    'stepnoy-oopt': {
+      title: 'Заказник «Степной»',
+      image: 'https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?w=1200&q=80',
+      meta: ['📍 Лениногорский район', '🦌 Заказник', '🎫 по пропуску'],
+      description: 'Государственный природный заказник «Степной» имени А.И. Щеповских. Известен колониями степного сурка-байбака, сосновым бором и огромным муравьиным городом.',
+      details: [
+        'Колония степного сурка-байбака',
+        'Сосновый бор с вековыми деревьями',
+        'Муравьиный город',
+        'Наблюдение за совами',
+        'Экотропа «По тропинкам Степного»'
+      ],
+      rules: 'Возьмите бинокль. Не приближайтесь к суркам. Дети до 14 — со взрослыми.',
+      contact: 'Госкомитет РТ по биоресурсам: +7 (843) 267-68-67'
+    },
+    'baltasinsky-oopt': {
+      title: 'Заказник «Балтасинский»',
+      image: 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=1200&q=80',
+      meta: ['📍 Балтасинский район', '🦌 Заказник', '🎫 по пропуску'],
+      description: 'Государственный природный заказник «Балтасинский». На его территории обустроена интерактивная экотропа «Прогулка по Барскому парку».',
+      details: [
+        'Экологическая лаборатория под открытым небом',
+        'Интерактивные станции',
+        'Наблюдение за растениями и насекомыми',
+        'Экологические игры для детей',
+        'Обустроенные места для отдыха'
+      ],
+      rules: 'Посещение по согласованию. Не срывайте растения, не ловите насекомых.',
+      contact: 'Госкомитет РТ по биоресурсам: +7 (843) 267-68-67'
+    },
+    'zeya-oopt': {
+      title: 'Заказник «Зея буйлары»',
+      image: 'https://images.unsplash.com/photo-1511497584788-876760111969?w=1200&q=80',
+      meta: ['📍 Буинский район', '🦌 Заказник', '🎫 по пропуску'],
+      description: 'Государственный природный заказник «Зея буйлары» в Буинском районе. Здесь растут 150 вековых деревьев, обустроена экотропа «Путешествие в Бай Урманы».',
+      details: [
+        '150 вековых деревьев',
+        'Липы, сосны-богатыри, берёзы',
+        'Наблюдение за птицами и белками',
+        'Пикниковая зона',
+        'Информационные стенды о флоре'
+      ],
+      rules: 'Посещение по согласованию. Не повреждайте кору деревьев, не мусорите.',
+      contact: 'Госкомитет РТ по биоресурсам: +7 (843) 267-68-67'
+    },
+    'vkgpbz-oopt': {
+      title: 'Волжско-Камский заповедник',
+      image: 'https://images.unsplash.com/photo-1418065460487-3e41a6c84dc5?w=1200&q=80',
+      meta: ['📍 Зеленодольский район', '🌲 Заповедник', '📏 10 091 га', '🎫 по пропуску'],
+      description: 'Один из старейших заповедников России (основан в 1960 году). Состоит из двух участков: Раифского и Сараловского. Здесь сохраняются реликтовые леса и уникальные озёра.',
+      details: [
+        'Раифский участок с реликтовыми соснами',
+        'Сараловский участок на острове-останце',
+        'Дендрарий с коллекцией редких растений',
+        'Музей природы',
+        'Экскурсии в сопровождении сотрудников'
+      ],
+      rules: 'Посещение только по пропускам. Запрещено сходить с троп, рвать растения, шуметь.',
+      contact: 'Волжско-Камский заповедник: +7 (843) 271-23-45'
+    },
+    'nizhnyaya-kama-oopt': {
+      title: 'Национальный парк «Нижняя Кама»',
+      image: 'https://images.unsplash.com/photo-1418065460487-3e41a6c84dc5?w=1200&q=80',
+      meta: ['📍 Елабужский район', '🏞️ Национальный парк', '📏 26 601 га', '✅ свободный'],
+      description: 'Национальный парк в долине Камы, основан в 1991 году. Три экотропы: «Корабельная роща», «Малый бор», «Прикоснись к природе». Здесь же — Музей природы.',
+      details: [
+        'Экотропа «Корабельная роща» (1 км)',
+        'Экотропа «Малый бор» (10.4 км)',
+        'Экотропа «Прикоснись к природе» (1 км)',
+        'Музей природы',
+        'Смотровые площадки и родники'
+      ],
+      rules: 'Свободное посещение в зонах рекреации. Не сходите с троп, не мусорите, не разводите костры.',
+      contact: 'НП «Нижняя Кама»: +7 (8555) 71-23-45'
+    },
+    'volzhskie-prostory-oopt': {
+      title: 'Заказник «Волжские просторы»',
+      image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=80',
+      meta: ['📍 Верхнеуслонский район', '🦌 Заказник', '📏 29 000 га', '✅ свободный'],
+      description: 'Крупнейший природный заказник Татарстана, охватывающий 4 района. Здесь обитают косули, лоси, кабаны, множество видов птиц.',
+      details: [
+        'Пойменные луга Куйбышевского водохранилища',
+        'Обитание косули, лося, кабана',
+        'Место гнездования водоплавающих',
+        'Волжская тропа на территории заказника',
+        'Возможность свободного посещения'
+      ],
+      rules: 'Свободное посещение. Не сходите с троп, не пугайте животных.',
+      contact: 'Госкомитет РТ по биоресурсам: +7 (843) 267-68-67'
+    },
+    'golubye-oopt': {
+      title: 'Голубые озёра',
+      image: 'https://images.unsplash.com/photo-1439066615861-d1af74d74000?w=1200&q=80',
+      meta: ['📍 Казань', '💧 Памятник природы', '📏 200 га', '✅ свободный'],
+      description: 'Система карстовых озёр с чистейшей водой в черте Казани. Памятник природы регионального значения с 1972 года. Излюбленное место отдыха горожан.',
+      details: [
+        'Три озера: Большое, Малое, Провальное',
+        'Круглогодичный доступ',
+        'Возможность купания в летний период',
+        'Обустроенная экотропа',
+        'Работа волонтёрского проекта «Хранители Голубых озёр»'
+      ],
+      rules: 'Не оставляйте мусор, не используйте моющие средства, не вытаптывайте берега.',
+      contact: 'Минэкологии РТ: +7 (843) 267-68-67'
+    },
+    'lebyazhye-oopt': {
+      title: 'Лесопарк «Лебяжье»',
+      image: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1200&q=80',
+      meta: ['📍 Казань', '💧 Памятник природы', '📏 360 га', '✅ свободный'],
+      description: 'Памятник природы регионального значения. Крупный лесопарк на окраине Казани с системой экотроп, включая «Маршрут Ежа» для семей с детьми.',
+      details: [
+        'Экотропа «Маршрут Ежа»',
+        '300 видов растений',
+        '24 вида млекопитающих',
+        'Около 100 видов птиц',
+        'Доступность для семей с детьми'
+      ],
+      rules: 'Свободное посещение. Соблюдайте тишину, не сходите с троп, не мусорите.',
+      contact: 'Минэкологии РТ: +7 (843) 267-68-67'
+    }
+  };
+</script>
+<script src="script.js"></script>
+</body>
+</html>

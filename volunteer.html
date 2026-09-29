@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Как стать эковолонтёром — ЭкоТатарстан</title>
+<meta name="description" content="5 шагов от первого клика до статуса Хранителя природы Татарстана.">
+<meta name="theme-color" content="#0d2818">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = { theme: { extend: {
+    colors: { green900:'#1b4332', green800:'#0d2818', green700:'#2d6a4f', green500:'#40916c', green300:'#74c69d', green100:'#d8f3dc', sand:'#f4f1de', cream:'#f5f1e8', ink:'#1b1b1b' },
+    fontFamily: { sans: ['Inter','system-ui','sans-serif'] }
+  }}}
+</script>
+<link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
+<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>">
+</head>
+<body class="bg-white">
+
+<header class="site-header" style="position:fixed;top:0;left:0;right:0;z-index:50;background:rgba(13,40,24,.85);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.08);padding:.9rem 0">
+  <div class="container-wide" style="display:flex;align-items:center;justify-content:space-between;gap:1.5rem">
+    <a href="index.html" class="logo-plate">
+      <div class="logo-plate__main">🌿 EcoTatarstan</div>
+      <div class="logo-plate__sub">Платформа 2026</div>
+    </a>
+    <nav class="hero-nav__menu">
+      <a href="index.html">Главная</a>
+      <a href="map.html">Карта троп</a>
+      <a href="oopt.html">ООПТ</a>
+      <a href="calendar.html">Календарь</a>
+      <a href="volunteer.html" class="active">Волонтёрство</a>
+      <a href="about.html">О проекте</a>
+    </nav>
+    <button class="burger-round" id="burger" aria-label="Меню"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="fullhero" style="min-height:80vh;padding-top:8rem;padding-bottom:5rem">
+  <div class="fullhero__bg" style="background-image:url('https://images.unsplash.com/photo-1552799446-159ba9523315?w=1920&q=80')"></div>
+  <div class="fullhero__overlay"></div>
+  <div class="noise-overlay"></div>
+
+  <div class="fullhero__content container-wide">
+    <div style="margin-top:2rem" class="hero-anim-2">
+      <div style="font-size:.72rem;letter-spacing:.3em;text-transform:uppercase;color:rgba(255,255,255,.7);font-weight:800;margin-bottom:1rem">Волонтёрство · Татарстан 2026</div>
+      <h1 class="giant" style="color:#fff;font-size:clamp(2.8rem,7.5vw,6rem)">
+        Стань <em style="font-style:italic">Хранителем</em><br>
+        природы
+      </h1>
+      <p style="color:rgba(255,255,255,.85);max-width:640px;margin-top:1.5rem;font-size:1.1rem">
+        Пять шагов от первого клика до статуса «Хранителя». Обучение, поддержка наставников, кадровый резерв для самых активных.
+      </p>
+
+      <div class="hero-cta hero-anim-5" style="margin-top:2.5rem">
+        <a href="#steps" class="btn-join">Как это работает →</a>
+        <a href="calendar.html" class="btn-video">
+          <span class="btn-video__icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="margin-left:2px"><path d="M8 5v14l11-7z"/></svg>
+          </span>
+          Ближайшие акции
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TIMELINE -->
+<section class="section section--cream" id="steps">
+  <div class="container">
+    <div class="section-head" data-aos="fade-up">
+      <div style="font-size:.72rem;letter-spacing:.3em;text-transform:uppercase;color:var(--green-700);font-weight:800;margin-bottom:.8rem">Путь Хранителя</div>
+      <h2 class="giant">Пять <em style="font-style:italic">шагов</em></h2>
+      <p style="font-size:1.05rem;margin-top:1rem;max-width:640px">Путь занимает от нескольких недель до сезона — в зависимости от вашей активности.</p>
+    </div>
+
+    <div class="timeline">
+      <div class="tl-step" data-aos="fade-up">
+        <div class="tl-step__dot">1</div>
+        <h3>Выбери проект</h3>
+        <p>Ознакомься с направлениями: субботники, посадка деревьев, учёт животных, эколагеря. Выбери то, что ближе — по району, по типу активности или по расписанию.</p>
+      </div>
+      <div class="tl-step" data-aos="fade-up" data-aos-delay="100">
+        <div class="tl-step__dot">2</div>
+        <h3>Пройди обучение</h3>
+        <p>Онлайн-курс из 4 модулей: основы экологии, техника безопасности на ООПТ, работа с инструментом, первая помощь. Занимает 2–3 часа.</p>
+      </div>
+      <div class="tl-step" data-aos="fade-up" data-aos-delay="200">
+        <div class="tl-step__dot">3</div>
+        <h3>Зарегистрируйся</h3>
+        <p>Заполни профиль на платформе: укажи район, интересы и доступное время. Система подберёт подходящие акции автоматически.</p>
+      </div>
+      <div class="tl-step" data-aos="fade-up" data-aos-delay="300">
+        <div class="tl-step__dot">4</div>
+        <h3>Участвуй в акции</h3>
+        <p>Выезжай на первое мероприятие. Наставник поможет освоиться, выдаст инвентарь и расскажет, как всё устроено.</p>
+      </div>
+      <div class="tl-step" data-aos="fade-up" data-aos-delay="400">
+        <div class="tl-step__dot" style="background:var(--green-700);color:#fff;border-color:var(--green-500)">★</div>
+        <h3>Получи статус «Хранителя»</h3>
+        <p>После 5 участий и 30 часов волонтёрства ты получаешь значок, доступ к закрытым эколагерям и право вести собственные акции.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ПРОЕКТЫ -->
+<section class="section">
+  <div class="container">
+    <div class="section-head" data-aos="fade-up">
+      <div style="font-size:.72rem;letter-spacing:.3em;text-transform:uppercase;color:var(--green-700);font-weight:800;margin-bottom:.8rem">Проекты · 2026</div>
+      <h2 class="giant">Куда <em style="font-style:italic">присоединиться</em></h2>
+      <p style="font-size:1.05rem;margin-top:1rem;max-width:640px">Каждый проект — это команда наставников, понятная система роста и реальные результаты.</p>
+    </div>
+
+    <div class="grid grid-2">
+      <div class="feat-card" data-aos="fade-up">
+        <div style="aspect-ratio:16/9;border-radius:18px;overflow:hidden;margin:-2.2rem -2.2rem 1.5rem;position:relative">
+          <img src="https://images.unsplash.com/photo-1439066615861-d1af74d74000?w=800&q=80" alt="" style="width:100%;height:100%;object-fit:cover">
+          <span class="badge badge--green" style="position:absolute;top:1rem;left:1rem;background:#fff">Флагман</span>
+        </div>
+        <h3>Хранители Голубых озёр</h3>
+        <p>Проект по сохранению системы Голубых озёр в Казани — памятника природы регионального значения. Волонтёры патрулируют территорию, проводят экскурсии и следят за чистотой воды.</p>
+        <div style="display:flex;gap:2rem;margin:1.2rem 0;flex-wrap:wrap">
+          <div>
+            <div style="font-size:1.8rem;font-weight:900;color:var(--green-700)">150</div>
+            <div style="font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;font-weight:800;color:rgba(27,27,27,.6)">обученных волонтёров</div>
+          </div>
+          <div>
+            <div style="font-size:1.8rem;font-weight:900;color:var(--green-700)">15</div>
+            <div style="font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;font-weight:800;color:rgba(27,27,27,.6)">в кадровом резерве</div>
+          </div>
+        </div>
+        <a href="#" class="btn-hero btn-primary btn-sm js-open-contact" style="margin-top:.5rem">Присоединиться →</a>
+      </div>
+
+      <div class="feat-card" data-aos="fade-up" data-aos-delay="100">
+        <div style="aspect-ratio:16/9;border-radius:18px;overflow:hidden;margin:-2.2rem -2.2rem 1.5rem;position:relative">
+          <img src="https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=800&q=80" alt="" style="width:100%;height:100%;object-fit:cover">
+          <span class="badge badge--green" style="position:absolute;top:1rem;left:1rem;background:#fff">Массовый</span>
+        </div>
+        <h3>Будет чисто</h3>
+        <p>Республиканское молодёжное движение за чистые берега, парки и леса. Ежемесячные субботники во всех районах, работа с местными сообществами и школами.</p>
+        <div style="display:flex;gap:2rem;margin:1.2rem 0;flex-wrap:wrap">
+          <div>
+            <div style="font-size:1.8rem;font-weight:900;color:var(--green-700)">2 400</div>
+            <div style="font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;font-weight:800;color:rgba(27,27,27,.6)">участников за год</div>
+          </div>
+          <div>
+            <div style="font-size:1.8rem;font-weight:900;color:var(--green-700)">48</div>
+            <div style="font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;font-weight:800;color:rgba(27,27,27,.6)">акций проведено</div>
+          </div>
+        </div>
+        <a href="#" class="btn-hero btn-primary btn-sm js-open-contact" style="margin-top:.5rem">Присоединиться →</a>
+      </div>
+
+      <div class="feat-card" data-aos="fade-up">
+        <div style="aspect-ratio:16/9;border-radius:18px;overflow:hidden;margin:-2.2rem -2.2rem 1.5rem;position:relative">
+          <img src="https://images.unsplash.com/photo-1448375240586-882707db888b?w=800&q=80" alt="" style="width:100%;height:100%;object-fit:cover">
+          <span class="badge badge--green" style="position:absolute;top:1rem;left:1rem;background:#fff">Лес</span>
+        </div>
+        <h3>Лесной дозор</h3>
+        <p>Помощь Волжско-Камскому заповеднику: обустройство троп, учёт животных, борьба с браконьерством. Для тех, кто готов к регулярным выездам.</p>
+        <div style="display:flex;gap:2rem;margin:1.2rem 0;flex-wrap:wrap">
+          <div>
+            <div style="font-size:1.8rem;font-weight:900;color:var(--green-700)">80</div>
+            <div style="font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;font-weight:800;color:rgba(27,27,27,.6)">активных участников</div>
+          </div>
+          <div>
+            <div style="font-size:1.8rem;font-weight:900;color:var(--green-700)">6</div>
+            <div style="font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;font-weight:800;color:rgba(27,27,27,.6)">районов охвата</div>
+          </div>
+        </div>
+        <a href="#" class="btn-hero btn-primary btn-sm js-open-contact" style="margin-top:.5rem">Присоединиться →</a>
+      </div>
+
+      <div class="feat-card" data-aos="fade-up" data-aos-delay="100">
+        <div style="aspect-ratio:16/9;border-radius:18px;overflow:hidden;margin:-2.2rem -2.2rem 1.5rem;position:relative">
+          <img src="https://images.unsplash.com/photo-1552728089-57bdde30beb3?w=800&q=80" alt="" style="width:100%;height:100%;object-fit:cover">
+          <span class="badge badge--green" style="position:absolute;top:1rem;left:1rem;background:#fff">Наука</span>
+        </div>
+        <h3>Птицы Татарстана</h3>
+        <p>Гражданская наука: учёт птиц, мониторинг гнёзд, помощь орнитологам. Подойдёт тем, кто любит наблюдать и готов заполнять дневники наблюдений.</p>
+        <div style="display:flex;gap:2rem;margin:1.2rem 0;flex-wrap:wrap">
+          <div>
+            <div style="font-size:1.8rem;font-weight:900;color:var(--green-700)">210</div>
+            <div style="font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;font-weight:800;color:rgba(27,27,27,.6)">наблюдателей</div>
+          </div>
+          <div>
+            <div style="font-size:1.8rem;font-weight:900;color:var(--green-700)">1 200</div>
+            <div style="font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;font-weight:800;color:rgba(27,27,27,.6)">записей в базе</div>
+          </div>
+        </div>
+        <a href="#" class="btn-hero btn-primary btn-sm js-open-contact" style="margin-top:.5rem">Присоединиться →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ТАБЛИЦА НАВЫКОВ -->
+<section class="section section--cream">
+  <div class="container">
+    <div class="section-head" data-aos="fade-up">
+      <div style="font-size:.72rem;letter-spacing:.3em;text-transform:uppercase;color:var(--green-700);font-weight:800;margin-bottom:.8rem">Навыки</div>
+      <h2 class="giant">Что <em style="font-style:italic">пригодится</em></h2>
+      <p style="font-size:1.05rem;margin-top:1rem;max-width:640px">Никаких специальных требований нет — всему научим. Но эти навыки сделают ваше участие особенно ценным.</p>
+    </div>
+
+    <div class="table-wrap" data-aos="fade-up">
+      <table>
+        <thead>
+          <tr>
+            <th>Навык</th>
+            <th>Зачем нужен</th>
+            <th>Уровень</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Физическая выносливость</strong></td><td>Длительные выезды, работа на тропах</td><td><span class="badge badge--green">Базовый</span></td></tr>
+          <tr><td><strong>Работа в команде</strong></td><td>Все акции — групповые</td><td><span class="badge badge--green">Базовый</span></td></tr>
+          <tr><td><strong>Основы первой помощи</strong></td><td>Безопасность на выездах</td><td><span class="badge badge--sand">Обучение</span></td></tr>
+          <tr><td><strong>Ориентирование на местности</strong></td><td>Работа на удалённых тропах</td><td><span class="badge badge--sand">Обучение</span></td></tr>
+          <tr><td><strong>Навыки фото/видео</strong></td><td>Освещение акций в соцсетях</td><td><span class="badge badge--blue">Плюс</span></td></tr>
+          <tr><td><strong>Знание растений и животных</strong></td><td>Учёты, экскурсии, мониторинг</td><td><span class="badge badge--blue">Плюс</span></td></tr>
+          <tr><td><strong>Опыт работы с детьми</strong></td><td>Эколагеря и школьные акции</td><td><span class="badge badge--blue">Плюс</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="section">
+  <div class="container">
+    <div class="section-head text-center" style="margin-inline:auto;text-align:center;max-width:640px" data-aos="fade-up">
+      <div style="font-size:.72rem;letter-spacing:.3em;text-transform:uppercase;color:var(--green-700);font-weight:800;margin-bottom:.8rem">FAQ</div>
+      <h2 class="giant">Частые <em style="font-style:italic">вопросы</em></h2>
+    </div>
+
+    <div class="faq">
+      <div class="faq-item">
+        <button class="faq-q">С какого возраста можно стать волонтёром?<span class="faq-q__icon">+</span></button>
+        <div class="faq-a"><p>С 14 лет — в сопровождении взрослого или с письменного согласия родителей. С 18 лет — самостоятельно, без ограничений. Для эколагерей есть отдельные подростковые смены 14–17 лет.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Нужен ли специальный инвентарь?<span class="faq-q__icon">+</span></button>
+        <div class="faq-a"><p>Нет. Перчатки, мешки, инструменты и аптечку выдаёт организатор. От вас — удобная одежда по погоде, закрытая обувь, головной убор и бутылка воды.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Сколько времени это занимает?<span class="faq-q__icon">+</span></button>
+        <div class="faq-a"><p>Одна акция обычно длится 3–6 часов. Обучение — 2–3 часа онлайн. Можно участвовать раз в месяц, а можно каждую неделю — выбор за вами.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Оплачивается ли проезд до места?<span class="faq-q__icon">+</span></button>
+        <div class="faq-a"><p>На крупные республиканские акции организуется централизованный трансфер из Казани. На локальные выезды — добираетесь самостоятельно или договариваетесь с другими волонтёрами через чат проекта.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Что такое статус «Хранителя»?<span class="faq-q__icon">+</span></button>
+        <div class="faq-a"><p>Это следующий уровень после базового волонтёрства. Даёт право вести собственные акции, получать приоритет на эколагеря, участвовать в закрытых встречах с экспертами и получать мерч платформы.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Можно ли участвовать всей семьёй?<span class="faq-q__icon">+</span></button>
+        <div class="faq-a"><p>Да! Многие субботники и посадки деревьев рассчитаны на семейное участие. Дети до 14 лет — только со взрослыми. Для семей есть отдельная категория акций с укороченной программой.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="section section--tight">
+  <div class="container">
+    <div class="final-cta" data-aos="zoom-in">
+      <div class="final-cta__bg" style="background-image:url('https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=1600&q=80')"></div>
+      <div class="final-cta__overlay"></div>
+      <div class="final-cta__content">
+        <h2 class="giant" style="color:#fff;margin-bottom:1.2rem">Первый шаг —<br><em style="font-style:italic">самый важный</em></h2>
+        <p style="color:rgba(255,255,255,.85);font-size:1.1rem;max-width:600px;margin:0 auto 2.5rem">Запишитесь на ближайшую акцию. Это займёт 2 минуты, а впечатлений хватит на весь сезон.</p>
+        <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
+          <a href="calendar.html" class="btn-hero btn-white">📅 Выбрать акцию</a>
+          <a href="#" class="btn-hero btn-glass js-open-contact">✍️ Оставить заявку</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo">🌿 EcoTatarstan</div>
+        <p>Цифровая платформа экотуризма и эковолонтёрства Республики Татарстан.</p>
+      </div>
+      <div>
+        <h4>Навигация</h4>
+        <ul>
+          <li><a href="index.html">Главная</a></li>
+          <li><a href="map.html">Карта троп</a></li>
+          <li><a href="oopt.html">Карта ООПТ</a></li>
+          <li><a href="calendar.html">Календарь</a></li>
+          <li><a href="volunteer.html">Волонтёрство</a></li>
+          <li><a href="about.html">О проекте</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Контакты</h4>
+        <ul>
+          <li>📞 <a href="tel:+78430000000">+7 (843) 000-00-00</a></li>
+          <li>✉️ <a href="mailto:info@ecotatarstan.ru">info@ecotatarstan.ru</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">© 2026 ЭкоТатарстан.</div>
+  </div>
+</footer>
+
+<div class="mobile-nav" id="mobileNav">
+  <a href="index.html">Главная</a>
+  <a href="map.html">Карта троп</a>
+  <a href="oopt.html">ООПТ</a>
+  <a href="calendar.html">Календарь</a>
+  <a href="volunteer.html">Волонтёрство</a>
+  <a href="about.html">О проекте</a>
+</div>
+
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="modal__head">
+      <h3 class="modal__title" id="detailTitle" style="font-size:1.5rem;font-weight:900">Заявка на волонтёрство</h3>
+      <button class="modal__close" aria-label="Закрыть">✕</button>
+    </div>
+    <div id="detailBody">
+      <form id="volunteerForm" style="display:flex;flex-direction:column;gap:1rem">
+        <div class="field"><label>Ваше имя *</label><input type="text" required placeholder="Иван Иванов"></div>
+        <div class="field"><label>Email *</label><input type="email" required placeholder="you@example.com"></div>
+        <div class="field"><label>Телефон</label><input type="tel" placeholder="+7 (___) ___-__-__"></div>
+        <div class="field">
+          <label>Какой проект интересует?</label>
+          <select>
+            <option>Хранители Голубых озёр</option>
+            <option>Будет чисто</option>
+            <option>Лесной дозор</option>
+            <option>Птицы Татарстана</option>
+            <option>Пока не решил(а)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Опыт волонтёрства</label>
+          <select>
+            <option>Нет опыта — хочу начать</option>
+            <option>Участвовал(а) в акциях</option>
+            <option>Опытный волонтёр</option>
+          </select>
+        </div>
+        <button type="submit" class="btn-hero btn-primary btn-block">Отправить заявку</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // Кастомный обработчик открытия модалки для кнопок js-open-contact
+    const modal = document.getElementById('modal');
+    const title = document.getElementById('detailTitle');
+    const body = document.getElementById('detailBody');
+    const originalBodyHTML = body ? body.innerHTML : '';
+
+    document.querySelectorAll('.js-open-contact').forEach(btn => {
+      btn.addEventListener('click', e => {
+        e.preventDefault();
+        if (title) title.textContent = 'Заявка на волонтёрство';
+        if (body) body.innerHTML = originalBodyHTML;
+        modal?.classList.add('open');
+        document.body.style.overflow = 'hidden';
+        // переустанавливаем submit
+        document.getElementById('volunteerForm')?.addEventListener('submit', ev => {
+          ev.preventDefault();
+          alert('Спасибо! Ваша заявка отправлена. Мы свяжемся с вами в течение 2 рабочих дней.');
+          modal?.classList.remove('open');
+          document.body.style.overflow = '';
+        });
+      });
+    });
+  });
+</script>
+<script src="script.js"></script>
+</body>
+</html>

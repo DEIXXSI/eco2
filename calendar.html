@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Календарь мероприятий — ЭкоТатарстан</title>
+<meta name="description" content="Актуальные экологические мероприятия Республики Татарстан с 30 сентября 2026 года.">
+<meta name="theme-color" content="#0d2818">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = { theme: { extend: {
+    colors: { green900:'#1b4332', green800:'#0d2818', green700:'#2d6a4f', green500:'#40916c', green300:'#74c69d', green100:'#d8f3dc', sand:'#f4f1de', cream:'#f5f1e8', ink:'#1b1b1b' },
+    fontFamily: { sans: ['Inter','system-ui','sans-serif'] }
+  }}}
+</script>
+<link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
+<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>">
+</head>
+<body class="bg-white">
+
+<header class="site-header" style="position:fixed;top:0;left:0;right:0;z-index:50;background:rgba(13,40,24,.85);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.08);padding:.9rem 0">
+  <div class="container-wide" style="display:flex;align-items:center;justify-content:space-between;gap:1.5rem">
+    <a href="index.html" class="logo-plate">
+      <div class="logo-plate__main">🌿 EcoTatarstan</div>
+      <div class="logo-plate__sub">Платформа 2026</div>
+    </a>
+    <nav class="hero-nav__menu">
+      <a href="index.html">Главная</a>
+      <a href="map.html">Карта троп</a>
+      <a href="oopt.html">ООПТ</a>
+      <a href="calendar.html" class="active">Календарь</a>
+      <a href="volunteer.html">Волонтёрство</a>
+      <a href="about.html">О проекте</a>
+    </nav>
+    <button class="burger-round" id="burger" aria-label="Меню"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="fullhero" style="min-height:70vh;padding-top:8rem;padding-bottom:4rem">
+  <div class="fullhero__bg" style="background-image:url('https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=1920&q=80')"></div>
+  <div class="fullhero__overlay"></div>
+  <div class="noise-overlay"></div>
+
+  <div class="fullhero__content container-wide">
+    <div style="margin-top:2rem" class="hero-anim-2">
+      <div style="font-size:.72rem;letter-spacing:.3em;text-transform:uppercase;color:rgba(255,255,255,.7);font-weight:800;margin-bottom:1rem">Актуально с 30 сентября 2026</div>
+      <h1 class="giant" style="color:#fff;font-size:clamp(3rem,8vw,6.5rem)">
+        Календарь<br>
+        <em style="font-style:italic">событий</em>
+      </h1>
+      <p style="color:rgba(255,255,255,.85);max-width:640px;margin-top:1.5rem;font-size:1.1rem">
+        Только актуальные мероприятия осенне-зимнего сезона 2026. Реальные акции Минлесхоза и Минэкологии РТ. Нажмите «Подробнее» — узнаете условия участия.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ФИЛЬТРЫ -->
+<section class="section section--tight">
+  <div class="container">
+    <div class="cal-filters" data-aos="fade-up">
+      <div class="cal-filters__row">
+        <div class="field">
+          <label>Район</label>
+          <select data-filter="district">
+            <option value="">Все районы</option>
+            <option value="все районы">Все районы (республиканская акция)</option>
+            <option value="высокогорский">Высокогорский</option>
+            <option value="зеленодольский">Зеленодольский</option>
+            <option value="казань">Казань</option>
+            <option value="азнакаево">Азнакаево</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Дата</label>
+          <input type="date" data-filter="date">
+        </div>
+        <div class="field">
+          <label>Поиск</label>
+          <input type="text" data-filter="search" placeholder="Название события…">
+        </div>
+      </div>
+
+      <div style="margin-top:1.5rem">
+        <label style="display:block;font-size:.85rem;font-weight:700;color:var(--green-900);margin-bottom:.6rem">Тип активности</label>
+        <div class="checkbox-group">
+          <label class="checkbox">
+            <input type="checkbox" data-filter="type" value="субботник">
+            <span>🧹 Субботник</span>
+          </label>
+          <label class="checkbox">
+            <input type="checkbox" data-filter="type" value="посадка деревьев">
+            <span>🌳 Посадка деревьев</span>
+          </label>
+          <label class="checkbox">
+            <input type="checkbox" data-filter="type" value="сбор батареек">
+            <span>🔋 Сбор батареек</span>
+          </label>
+          <label class="checkbox">
+            <input type="checkbox" data-filter="type" value="эколагерь">
+            <span>⛺ Эколагерь</span>
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- СЕТКА СОБЫТИЙ -->
+<section class="section section--tight">
+  <div class="container">
+    <div class="grid grid-3">
+
+      <div class="event-card" data-category data-type="субботник" data-district="азнакаево" data-date="2026-10-08" data-aos="fade-up">
+        <div class="event-card__date"><span>08</span>окт</div>
+        <div class="event-card__body">
+          <span class="badge badge--green">Субботник</span>
+          <h3>Субботник у проток Кривель</h3>
+          <p class="event-card__meta">📍 Закамское ТУ · Будет чисто</p>
+          <p>Уборка мусора у проток Кривель и понтонного моста. Организатор — движение «Будет чисто».</p>
+          <button class="btn-hero btn-outline btn-sm js-detail" data-detail="subbotnik-krivel-2026">Подробнее</button>
+        </div>
+      </div>
+
+      <div class="event-card" data-category data-type="посадка деревьев" data-district="высокогорский" data-date="2026-10-10" data-aos="fade-up" data-aos-delay="100">
+        <div class="event-card__date"><span>10</span>окт</div>
+        <div class="event-card__body">
+          <span class="badge badge--green">Посадка деревьев</span>
+          <h3>Посадка леса</h3>
+          <p class="event-card__meta">📍 Высокогорский р-н · Минлесхоз РТ</p>
+          <p>Осенняя посадка саженцев сосны и дуба. Центральный аппарат Минлесхоза приглашает волонтёров.</p>
+          <button class="btn-hero btn-outline btn-sm js-detail" data-detail="posadka-lesa-vysokogorsk-2026">Подробнее</button>
+        </div>
+      </div>
+
+      <div class="event-card" data-category data-type="субботник" data-district="казань" data-date="2026-10-10" data-aos="fade-up" data-aos-delay="200">
+        <div class="event-card__date"><span>10</span>окт</div>
+        <div class="event-card__body">
+          <span class="badge badge--green">Субботник</span>
+          <h3>Школьный кубок чистоты</h3>
+          <p class="event-card__meta">📍 Казань · парк «Савиново»</p>
+          <p>Квест «Чистые игры» для школьников. Организатор — Минэкологии РТ.</p>
+          <button class="btn-hero btn-outline btn-sm js-detail" data-detail="kubok-chistoty-2026">Подробнее</button>
+        </div>
+      </div>
+
+      <div class="event-card" data-category data-type="посадка деревьев" data-district="зеленодольский" data-date="2026-10-13" data-aos="fade-up">
+        <div class="event-card__date"><span>13</span>окт</div>
+        <div class="event-card__body">
+          <span class="badge badge--green">Посадка деревьев</span>
+          <h3>День посадки леса</h3>
+          <p class="event-card__meta">📍 Волжско-Камское ТУ</p>
+          <p>Посадка саженцев на территории Волжско-Камского территориального управления.</p>
+          <button class="btn-hero btn-outline btn-sm js-detail" data-detail="den-posadki-volzhsko-kamskoe-2026">Подробнее</button>
+        </div>
+      </div>
+
+      <div class="event-card" data-category data-type="субботник" data-district="все районы" data-date="2026-11-14" data-aos="fade-up" data-aos-delay="100">
+        <div class="event-card__date"><span>14</span>ноя</div>
+        <div class="event-card__body">
+          <span class="badge badge--green">Субботник</span>
+          <h3>Чистые леса Татарстана</h3>
+          <p class="event-card__meta">📍 Все районы РТ · Минлесхоз РТ</p>
+          <p>Осенний этап республиканской акции: очистка лесов от мусора, сухостоя и валежника.</p>
+          <button class="btn-hero btn-outline btn-sm js-detail" data-detail="chistye-lesa-2026">Подробнее</button>
+        </div>
+      </div>
+
+      <div class="event-card" data-category data-type="сбор батареек" data-district="все районы" data-date="2026-11-16" data-aos="fade-up" data-aos-delay="200">
+        <div class="event-card__date"><span>16</span>ноя</div>
+        <div class="event-card__body">
+          <span class="badge badge--green">Сбор батареек</span>
+          <h3>Сдай батарейку — спаси ежа!</h3>
+          <p class="event-card__meta">📍 Все районы РТ · Минэкологии РТ</p>
+          <p>Республиканский конкурс по сбору отработанных батареек среди школ и детских садов.</p>
+          <button class="btn-hero btn-outline btn-sm js-detail" data-detail="batareyka-2026">Подробнее</button>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="js-empty hidden" style="text-align:center;padding:4rem 1rem;color:var(--muted);font-size:1.05rem">
+      🔍 По вашим фильтрам ничего не найдено.
+    </div>
+  </div>
+</section>
+
+<!-- ИНФОБЛОК -->
+<section class="section section--cream">
+  <div class="container">
+    <div class="grid grid-3">
+      <div class="feat-card" data-aos="fade-up">
+        <div class="feat-card__icon">📅</div>
+        <h3>Обновляется ежемесячно</h3>
+        <p>Мы публикуем только актуальные события. Устаревшие убираем сразу после окончания.</p>
+      </div>
+      <div class="feat-card" data-aos="fade-up" data-aos-delay="100">
+        <div class="feat-card__icon">🏛️</div>
+        <h3>Официальные источники</h3>
+        <p>Все события — из анонсов Минлесхоза РТ, Минэкологии РТ и движения «Будет чисто».</p>
+      </div>
+      <div class="feat-card" data-aos="fade-up" data-aos-delay="200">
+        <div class="feat-card__icon">🤝</div>
+        <h3>Открыто для всех</h3>
+        <p>Участвовать могут все желающие. Дети до 14 лет — в сопровождении взрослых.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="section section--tight">
+  <div class="container">
+    <div class="cta" data-aos="zoom-in">
+      <div>
+        <h2 class="giant">Хочешь<br>стать <em style="font-style:italic">Хранителем?</em></h2>
+        <p>5 шагов от выбора проекта до статуса «Хранителя». Обучение и поддержка наставников.</p>
+      </div>
+      <div class="cta__actions">
+        <a href="volunteer.html" class="btn-hero btn-white">🤝 Волонтёрство</a>
+        <a href="oopt.html" class="btn-hero btn-glass">🌲 Карта ООПТ</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo">🌿 EcoTatarstan</div>
+        <p>Цифровая платформа экотуризма и эковолонтёрства Республики Татарстан.</p>
+      </div>
+      <div>
+        <h4>Навигация</h4>
+        <ul>
+          <li><a href="index.html">Главная</a></li>
+          <li><a href="map.html">Карта троп</a></li>
+          <li><a href="oopt.html">Карта ООПТ</a></li>
+          <li><a href="calendar.html">Календарь</a></li>
+          <li><a href="volunteer.html">Волонтёрство</a></li>
+          <li><a href="about.html">О проекте</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Контакты</h4>
+        <ul>
+          <li>📞 <a href="tel:+78430000000">+7 (843) 000-00-00</a></li>
+          <li>✉️ <a href="mailto:info@ecotatarstan.ru">info@ecotatarstan.ru</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">© 2026 ЭкоТатарстан.</div>
+  </div>
+</footer>
+
+<div class="mobile-nav" id="mobileNav">
+  <a href="index.html">Главная</a>
+  <a href="map.html">Карта троп</a>
+  <a href="oopt.html">ООПТ</a>
+  <a href="calendar.html">Календарь</a>
+  <a href="volunteer.html">Волонтёрство</a>
+  <a href="about.html">О проекте</a>
+</div>
+
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="modal__head">
+      <h3 class="modal__title" id="detailTitle" style="font-size:1.5rem;font-weight:900">Подробнее</h3>
+      <button class="modal__close" aria-label="Закрыть">✕</button>
+    </div>
+    <div id="detailBody"></div>
+  </div>
+</div>
+
+<script>
+  window.DETAIL_DATA = {
+    'subbotnik-krivel-2026': {
+      title: 'Субботник у проток Кривель',
+      image: 'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=1200&q=80',
+      meta: ['📅 8 октября 2026', '📍 Закамское ТУ', '🎫 Бесплатно', '👥 Для всех'],
+      description: 'Уборка мусора у проток Кривель и понтонного моста. Организатор — молодёжное экологическое движение «Будет чисто» Республики Татарстан.',
+      details: [
+        'Уборка береговой зоны и прилегающей территории',
+        'Раздельный сбор мусора',
+        'Работа в командах',
+        'Инвентарь предоставляется',
+        'Возможность вступить в движение «Будет чисто»'
+      ],
+      rules: 'Возьмите удобную одежду, закрытую обувь и перчатки. Дети до 14 лет — со взрослыми.',
+      contact: 'Движение «Будет чисто»: almetyevsk.tatarstan.ru'
+    },
+    'posadka-lesa-vysokogorsk-2026': {
+      title: 'Посадка леса в Высокогорском районе',
+      image: 'https://images.unsplash.com/photo-1518495973542-4542c06a5843?w=1200&q=80',
+      meta: ['📅 10 октября 2026', '📍 Высокогорский район', '🎫 Бесплатно', '👥 Волонтёры 16+'],
+      description: 'Осенняя посадка саженцев сосны и дуба. Организатор — Центральный аппарат Минлесхоза РТ. Это возможность внести реальный вклад в восстановление лесов республики.',
+      details: [
+        'Посадка саженцев сосны и дуба',
+        'Инструктаж по правильной посадке',
+        'Весь инвентарь предоставляется',
+        'Работа в командах по 5–10 человек',
+        'Фотосессия и памятные сертификаты'
+      ],
+      rules: 'Возьмите удобную одежду, закрытую обувь, перчатки и запас воды. Дети до 16 лет — в сопровождении взрослых.',
+      contact: 'Минлесхоз РТ: +7 (843) 221-00-00'
+    },
+    'kubok-chistoty-2026': {
+      title: 'Школьный кубок чистоты',
+      image: 'https://images.unsplash.com/photo-1618477388954-7852f32655ec?w=1200&q=80',
+      meta: ['📅 10 октября 2026', '📍 Казань, парк «Савиново»', '🎫 Бесплатно', '👥 Школьники'],
+      description: 'Квест «Чистые игры» для школьников в формате соревнования. Организатор — Минэкологии РТ. Участники соревнуются в сборе и сортировке мусора, а также выполняют экологические задания.',
+      details: [
+        'Командное соревнование по сбору мусора',
+        'Раздельный сбор отходов',
+        'Экологические задания и викторины',
+        'Призы и подарки победителям',
+        'Возможность выиграть «Школьный кубок чистоты»'
+      ],
+      rules: 'Участвуют школьные команды. Перчатки и мешки предоставляются. Возьмите удобную одежду и обувь.',
+      contact: 'Минэкологии РТ: +7 (843) 267-68-67'
+    },
+    'den-posadki-volzhsko-kamskoe-2026': {
+      title: 'День посадки леса',
+      image: 'https://images.unsplash.com/photo-1418065460487-3e41a6c84dc5?w=1200&q=80',
+      meta: ['📅 13 октября 2026', '📍 Волжско-Камское ТУ', '🎫 Бесплатно', '👥 Волонтёры'],
+      description: 'Посадка саженцев на территории Волжско-Камского территориального управления Минлесхоза РТ. Мероприятие приурочено к осеннему сезону лесовосстановления.',
+      details: [
+        'Посадка саженцев хвойных и лиственных пород',
+        'Инструктаж от специалистов лесного хозяйства',
+        'Весь инвентарь предоставляется',
+        'Тёплый чай и пироги для участников',
+        'Знакомство с работой лесничества'
+      ],
+      rules: 'Возьмите удобную одежду, закрытую обувь и перчатки. Дети до 14 лет — со взрослыми.',
+      contact: 'Минлесхоз РТ: +7 (843) 221-00-00'
+    },
+    'chistye-lesa-2026': {
+      title: 'Чистые леса Татарстана — осенний этап',
+      image: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1200&q=80',
+      meta: ['📅 до 14 ноября 2026', '📍 Все районы РТ', '🎫 Бесплатно', '👥 Для всех'],
+      description: 'Традиционная природоохранная акция Минлесхоза РТ. Осенний этап продлится до 14 ноября. Участники очищают лесной фонд от твёрдых коммунальных отходов, сухостоя и валежника, ремонтируют аншлаги, информационные щиты и места отдыха.',
+      details: [
+        'Уборка мусора, сухостоя и валежника',
+        'Ремонт и обустройство аншлагов',
+        'Обустройство мест отдыха в лесах',
+        'Соответствует целям нацпроекта «Экологическое благополучие»',
+        'Весной 2026 года участие приняли 10 000 человек'
+      ],
+      rules: 'Инвентарь предоставляется организаторами. Возьмите удобную одежду, закрытую обувь и перчатки.',
+      contact: 'Минлесхоз РТ: +7 (843) 221-00-00'
+    },
+    'batareyka-2026': {
+      title: 'Сдай батарейку — спаси ежа!',
+      image: 'https://images.unsplash.com/photo-1604187351574-c75ca79f5807?w=1200&q=80',
+      meta: ['📅 16–20 ноября 2026', '📍 Все районы РТ', '🎫 Бесплатно', '👥 Школы и детсады'],
+      description: 'Республиканский конкурс по сбору отработанных батареек среди образовательных учреждений. Проводится Минэкологии РТ с 2019 года. В прошлом сезоне участники собрали 71 тонну батареек.',
+      details: [
+        'Сбор батареек в школах и детских садах',
+        'Отправка сводной таблицы с результатами',
+        'Взвешивание собранного: 16–20 ноября',
+        'Вывоз региональным оператором',
+        'Регламент на сайте eco.tatarstan.ru'
+      ],
+      rules: 'Участвуют только организованные группы. Необходимо вести учёт результатов.',
+      contact: 'Минэкологии РТ: eco.pros@tatar.ru'
+    }
+  };
+</script>
+<script src="script.js"></script>
+</body>
+</html>
