@@ -686,6 +686,37 @@
     });
   });
 </script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // Функция для анимации счетчиков
+    function animateCounter(el) {
+      var target = parseInt(el.getAttribute('data-counter'), 10);
+      if (isNaN(target)) return;
+      var duration = 2000; // 2 секунды
+      var start = null;
+
+      function step(timestamp) {
+        if (!start) start = timestamp;
+        var progress = timestamp - start;
+        var current = Math.min(Math.floor((progress / duration) * target), target);
+        el.textContent = current;
+
+        if (progress < duration) {
+          window.requestAnimationFrame(step);
+        } else {
+          el.textContent = target; // на всякий случай
+        }
+      }
+
+      window.requestAnimationFrame(step);
+    }
+
+    // Запускаем анимацию для всех элементов с data-counter
+    document.querySelectorAll('[data-counter]').forEach(function (el) {
+      animateCounter(el);
+    });
+  });
+</script>
 <script src="script.js"></script>
 </body>
 </html>
