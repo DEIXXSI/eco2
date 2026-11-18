@@ -142,7 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     document.querySelector('.js-empty')?.classList.toggle('hidden', visible > 0);
     const counter = document.getElementById('ooptCount');
-    if (counter) counter.textContent = `${visible} ООПТ`;
+    if (counter) counter.textContent = `${visible} из 196`;
   }
   filterInputs.forEach(inp => {
     inp.addEventListener('input', applyFilters);
@@ -178,17 +178,47 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  /* ---------- 10. MAP OOPT ---------- */
+  /* ---------- 10. MAP OOPT (с кластеризацией) ---------- */
   if (document.getElementById('ooptMap') && typeof L !== 'undefined') {
     const map = L.map('ooptMap', { scrollWheelZoom: false }).setView([55.7, 49.4], 8);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap', maxZoom: 18 }).addTo(map);
+
     const oopts = window.OOPT || [];
     const markers = {};
+
+    // Используем кластеризацию, если плагин подключён
+    const useCluster = typeof L.markerClusterGroup === 'function';
+    const cluster = useCluster ? L.markerClusterGroup({
+      showCoverageOnHover: false,
+      maxClusterRadius: 45,
+      spiderfyOnMaxZoom: true,
+      iconCreateFunction: function(cl) {
+        const count = cl.getChildCount();
+        return L.divIcon({
+          html: `<div style="background:linear-gradient(135deg,#2d6a4f,#74e0a0);color:#fff;width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.95rem;border:3px solid #fff;box-shadow:0 6px 20px rgba(45,106,79,.5),0 0 25px rgba(116,224,160,.6)">${count}</div>`,
+          className: 'oopt-cluster',
+          iconSize: [44, 44]
+        });
+      }
+    }) : null;
+
     oopts.forEach(o => {
-      const icon = L.divIcon({ className:'', html:`<div class="oopt-marker" style="background:${o.color}">${o.icon}</div>`, iconSize:[30,30], iconAnchor:[15,15] });
-      markers[o.id] = L.marker([o.lat, o.lng], { icon }).addTo(map)
+      const icon = L.divIcon({
+        className: '',
+        html: `<div class="oopt-marker" style="background:${o.color}">${o.icon}</div>`,
+        iconSize: [30, 30],
+        iconAnchor: [15, 15]
+      });
+      const marker = L.marker([o.lat, o.lng], { icon })
         .bindPopup(`<div style="font-family:Inter,system-ui;min-width:210px"><strong style="color:#1b4332;font-size:1.05rem">${o.name}</strong><br><span style="color:#5a5a5a;font-size:.85rem">${o.category} · ${o.district}</span><p style="margin:.5rem 0;font-size:.85rem;color:#5a5a5a">${o.desc}</p></div>`);
+
+      markers[o.id] = marker;
+      if (cluster) cluster.addLayer(marker);
+      else marker.addTo(map);
     });
+
+    if (cluster) map.addLayer(cluster);
+
     document.querySelectorAll('.oopt-item').forEach(item => {
       item.addEventListener('click', e => {
         if (e.target.closest('.js-detail')) return;
@@ -198,133 +228,17 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.oopt-item').forEach(i => i.classList.remove('active'));
         item.classList.add('active');
         map.flyTo([o.lat, o.lng], 11, { duration: 1.2 });
-        markers[id]?.openPopup();
+        // Если кластер включён — раскрываем его
+        if (cluster && markers[id]) {
+          cluster.zoomToShowLayer(markers[id], () => markers[id].openPopup());
+        } else {
+          markers[id]?.openPopup();
+        }
       });
     });
   }
 
-  /* ============================================================
-     CANVAS: ЛЕТАЮЩИЕ ЛИСТЬЯ
-     ============================================================ */
-  const canvas = document.createElement('canvas');
-  canvas.id = 'leavesCanvas';
-  document.body.appendChild(canvas);
-  const ctx = canvas.getContext('2d');
-
-  let W, H;
-  function resize() {
-    W = canvas.width = window.innerWidth;
-    H = canvas.height = window.innerHeight;
-  }
-  resize();
-  window.addEventListener('resize', resize);
-
-  const mouse = { x: W / 2, y: H / 2 };
-  window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
-
-  const LEAF_EMOJIS = ['🍃','🌿','🌱','🍂','🍁'];
-  const LEAF_COLORS = ['#74e0a0','#40916c','#a8e6c1','#f4a261','#d8f3dc'];
-
-  class Leaf {
-    constructor() {
-      this.reset(true);
-    }
-    reset(initial = false) {
-      this.x = Math.random() * W;
-      this.y = initial ? Math.random() * H : -50;
-      this.size = 12 + Math.random() * 22;
-      this.speedY = .3 + Math.random() * .8;
-      this.speedX = (Math.random() - .5) * .6;
-      this.rot = Math.random() * Math.PI * 2;
-      this.rotSpeed = (Math.random() - .5) * .03;
-      this.emoji = LEAF_EMOJIS[Math.floor(Math.random() * LEAF_EMOJIS.length)];
-      this.color = LEAF_COLORS[Math.floor(Math.random() * LEAF_COLORS.length)];
-      this.opacity = .3 + Math.random() * .5;
-      this.swayPhase = Math.random() * Math.PI * 2;
-      this.swayAmp = 20 + Math.random() * 40;
-    }
-    update(t) {
-      this.y += this.speedY;
-      this.x += this.speedX + Math.sin(t * .001 + this.swayPhase) * .5;
-      this.rot += this.rotSpeed;
-
-      // Отталкивание от курсора
-      const dx = this.x - mouse.x;
-      const dy = this.y - mouse.y;
-      const d = Math.sqrt(dx * dx + dy * dy);
-      if (d < 120) {
-        const force = (120 - d) / 120;
-        this.x += (dx / d) * force * 3;
-        this.y += (dy / d) * force * 3;
-      }
-
-      if (this.y > H + 50) this.reset();
-      if (this.x < -50) this.x = W + 50;
-      if (this.x > W + 50) this.x = -50;
-    }
-    draw() {
-      ctx.save();
-      ctx.translate(this.x, this.y);
-      ctx.rotate(this.rot);
-      ctx.globalAlpha = this.opacity;
-      ctx.font = `${this.size}px serif`;
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.shadowColor = this.color;
-      ctx.shadowBlur = 15;
-      ctx.fillText(this.emoji, 0, 0);
-      ctx.restore();
-    }
-  }
-
-  const leaves = [];
-  const leafCount = window.innerWidth < 768 ? 15 : 30;
-  for (let i = 0; i < leafCount; i++) leaves.push(new Leaf());
-
-  function animateLeaves(t) {
-    ctx.clearRect(0, 0, W, H);
-    leaves.forEach(l => { l.update(t); l.draw(); });
-    requestAnimationFrame(animateLeaves);
-  }
-  if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    requestAnimationFrame(animateLeaves);
-  }
-
-  /* ============================================================
-     CURSOR: DOT + RING
-     ============================================================ */
-  const cursorDot = document.createElement('div');
-  cursorDot.className = 'cursor-dot';
-  const cursorRing = document.createElement('div');
-  cursorRing.className = 'cursor-ring';
-  document.body.appendChild(cursorDot);
-  document.body.appendChild(cursorRing);
-
-  let ringX = 0, ringY = 0, dotX = 0, dotY = 0;
-  document.addEventListener('mousemove', e => {
-    dotX = e.clientX; dotY = e.clientY;
-    cursorDot.style.left = dotX + 'px';
-    cursorDot.style.top = dotY + 'px';
-  });
-
-  function animateCursor() {
-    ringX += (dotX - ringX) * .15;
-    ringY += (dotY - ringY) * .15;
-    cursorRing.style.left = ringX + 'px';
-    cursorRing.style.top = ringY + 'px';
-    requestAnimationFrame(animateCursor);
-  }
-  if (window.matchMedia('(hover: hover)').matches) animateCursor();
-
-  // Hover-эффект на интерактивных элементах
-  document.querySelectorAll('a, button, .feat-card, .photo-card, .glass-card').forEach(el => {
-    el.addEventListener('mouseenter', () => cursorRing.classList.add('hover'));
-    el.addEventListener('mouseleave', () => cursorRing.classList.remove('hover'));
-  });
-
-  /* ============================================================
-     RIPPLE ON CLICK
-     ============================================================ */
+  /* ---------- 11. RIPPLE ON CLICK (оставлен — лёгкий и приятный) ---------- */
   document.addEventListener('click', e => {
     const r = document.createElement('div');
     r.className = 'ripple';
@@ -336,9 +250,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => r.remove(), 900);
   });
 
-  /* ============================================================
-     MAGNETIC BUTTONS
-     ============================================================ */
+  /* ---------- 12. MAGNETIC BUTTONS ---------- */
   document.querySelectorAll('.btn-hero, .btn-join, .btn-play').forEach(el => {
     el.classList.add('magnetic');
     el.addEventListener('mousemove', e => {
@@ -350,9 +262,7 @@ document.addEventListener('DOMContentLoaded', () => {
     el.addEventListener('mouseleave', () => { el.style.transform = ''; });
   });
 
-  /* ============================================================
-     3D TILT CARDS
-     ============================================================ */
+  /* ---------- 13. 3D TILT CARDS ---------- */
   document.querySelectorAll('.feat-card, .photo-card, .glass-card, .stat-cell').forEach(card => {
     card.addEventListener('mousemove', e => {
       const rect = card.getBoundingClientRect();
@@ -363,9 +273,7 @@ document.addEventListener('DOMContentLoaded', () => {
     card.addEventListener('mouseleave', () => { card.style.transform = ''; });
   });
 
-  /* ============================================================
-     COUNTER ANIMATION
-     ============================================================ */
+  /* ---------- 14. COUNTER ANIMATION ---------- */
   const counters = document.querySelectorAll('[data-counter]');
   if (counters.length) {
     const obs = new IntersectionObserver(entries => {
@@ -390,9 +298,7 @@ document.addEventListener('DOMContentLoaded', () => {
     counters.forEach(c => obs.observe(c));
   }
 
-  /* ============================================================
-     SCROLL REVEAL
-     ============================================================ */
+  /* ---------- 15. SCROLL REVEAL ---------- */
   const revealEls = document.querySelectorAll('.reveal, [data-reveal]');
   if (revealEls.length) {
     const obs = new IntersectionObserver(entries => {
@@ -406,9 +312,7 @@ document.addEventListener('DOMContentLoaded', () => {
     revealEls.forEach(el => obs.observe(el));
   }
 
-  /* ============================================================
-     KINETIC TEXT (буквы дышат)
-     ============================================================ */
+  /* ---------- 16. KINETIC TEXT ---------- */
   document.querySelectorAll('.kinetic').forEach(el => {
     const text = el.textContent;
     el.innerHTML = text.split('').map((ch, i) =>

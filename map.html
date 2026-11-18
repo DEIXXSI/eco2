@@ -182,6 +182,64 @@
     'maly-bor-trail': { title:'Экотропа «Малый бор»', image:'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1200&q=80', meta:['📍 Елабужский район','📏 10.4 км','⚡ средняя','⏱ 3–4 часа'], description:'Экологическая тропа на территории национального парка «Нижняя Кама». Маршрут проходит по туристскому комплексу «Малый бор», включая посещение родника «Святой ключ».', details:['Прогулка по старинной дороге Елабуга — окрестные деревни','Посещение родника «Святой ключ»','Смотровая площадка для наблюдения за флорой и фауной','Знакомство со стоянками древних людей бронзового века','Возможность велопрогулки или лыжной прогулки зимой'], rules:'Посещение по согласованию с администрацией НП. Информационные стенды расскажут о правилах.', contact:'НП «Нижняя Кама»: +7 (8555) 71-23-45' }
   };
 </script>
+<script>
+  /* ============================================================
+     ИНИЦИАЛИЗАЦИЯ КАРТЫ ЭКОТРОП (Esri Tiles — без ключа)
+     ============================================================ */
+  document.addEventListener('DOMContentLoaded', function () {
+    var mapEl = document.getElementById('map');
+    if (!mapEl) return;
+
+    var map = L.map('map', {
+      center: [55.5, 50.5],
+      zoom: 7,
+      scrollWheelZoom: true
+    });
+
+    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+      attribution: 'Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012',
+      maxZoom: 19
+    }).addTo(map);
+
+    var markers = {};
+
+    (window.TRAILS || []).forEach(function (trail) {
+      var color = trail.difficulty === 'лёгкая' ? '#40916c'
+                : trail.difficulty === 'средняя' ? '#f4a261'
+                : '#e63946';
+
+      var marker = L.circleMarker([trail.lat, trail.lng], {
+        radius: 10,
+        fillColor: color,
+        color: '#fff',
+        weight: 3,
+        opacity: 1,
+        fillOpacity: 0.9
+      }).addTo(map);
+
+      marker.bindPopup(
+        '<strong>' + trail.name + '</strong><br>' +
+        '📍 ' + trail.district + '<br>' +
+        '📏 ' + trail.length + ' · ⚡ ' + trail.difficulty + '<br>' +
+        '<span style="font-size:.85rem;color:#555">' + trail.desc + '</span>'
+      );
+
+      markers[trail.id] = marker;
+    });
+
+    document.querySelectorAll('.trail-item').forEach(function (item) {
+      item.addEventListener('click', function (e) {
+        if (e.target.closest('.js-detail')) return;
+        var id = item.getAttribute('data-id');
+        var m = markers[id];
+        if (m) {
+          map.setView(m.getLatLng(), 12, { animate: true });
+          m.openPopup();
+        }
+      });
+    });
+  });
+</script>
 <script src="script.js"></script>
 </body>
 </html>

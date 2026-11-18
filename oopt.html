@@ -26,9 +26,64 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>">
 
 <style>
-  .oopt-cluster{
-    background:transparent !important;
-    border:none !important;
+  .oopt-cluster {
+    background: transparent !important;
+    border: none !important;
+  }
+  .oopt-cluster-inner {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #1b4332;
+    color: #fff;
+    font-weight: 900;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(27, 67, 50, 0.35);
+    border: 3px solid #fff;
+  }
+  
+  /* Стили для элементов списка ООПТ */
+  .oopt-item {
+    padding: 1rem;
+    border-bottom: 1px solid rgba(45,106,79,.08);
+    cursor: pointer;
+    transition: background .2s;
+  }
+  .oopt-item:hover {
+    background: rgba(45,106,79,.04);
+  }
+  .oopt-item__head {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    margin-bottom: .4rem;
+  }
+  .oopt-item__icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+  .oopt-item h4 {
+    font-weight: 800;
+    font-size: .92rem;
+    margin: 0;
+    color: var(--green-900);
+  }
+  .oopt-item__meta {
+    display: flex;
+    gap: .8rem;
+    font-size: .75rem;
+    color: var(--muted);
+    margin-top: .6rem;
+    flex-wrap: wrap;
   }
 </style>
 </head>
@@ -215,6 +270,7 @@
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+
 <script>
   /* ============================================================
      МАССИВ ИЗ 196 ООПТ ТАТАРСТАНА
@@ -479,6 +535,154 @@
         <button class="btn-hero btn-outline btn-sm js-detail" style="margin-top:.8rem;width:100%" data-detail="${o.id}-oopt">Подробнее</button>
       `;
       ooptListEl.appendChild(article);
+    });
+  });
+</script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    /* ============================================================
+       1. ИНИЦИАЛИЗАЦИЯ КАРТЫ И ТАЙЛОВ (Esri — без ключа)
+       ============================================================ */
+    var mapEl = document.getElementById('ooptMap');
+    if (!mapEl) return;
+
+    var map = L.map('ooptMap', {
+      center: [55.5, 50.5],
+      zoom: 7,
+      scrollWheelZoom: true
+    });
+
+    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+      attribution: 'Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012',
+      maxZoom: 19
+    }).addTo(map);
+
+    /* ============================================================
+       2. КЛАСТЕРИЗАЦИЯ И МАРКЕРЫ
+       ============================================================ */
+    var cluster = L.markerClusterGroup({
+      showCoverageOnHover: false,
+      maxClusterRadius: 50,
+      iconCreateFunction: function (c) {
+        return L.divIcon({
+          html: '<div class="oopt-cluster-inner">' + c.getChildCount() + '</div>',
+          className: 'oopt-cluster',
+          iconSize: L.point(40, 40)
+        });
+      }
+    });
+
+    var markers = {};
+
+    (window.OOPT || []).forEach(function (obj) {
+      var m = L.circleMarker([obj.lat, obj.lng], {
+        radius: 8,
+        fillColor: obj.color || '#40916c',
+        color: '#fff',
+        weight: 2,
+        opacity: 1,
+        fillOpacity: 0.9
+      });
+
+      m.bindPopup(
+        '<strong>' + obj.icon + ' ' + obj.name + '</strong><br>' +
+        '📍 ' + obj.district + '<br>' +
+        '📐 ' + obj.area + '<br>' +
+        '🎫 ' + obj.access + '<br>' +
+        '<span style="font-size:.85rem;color:#555">' + obj.desc + '</span>'
+      );
+
+      cluster.addLayer(m);
+      markers[obj.id] = m;
+    });
+
+    map.addLayer(cluster);
+
+    /* ============================================================
+       3. КЛИК ПО СПИСКУ — ЦЕНТРИРОВАНИЕ КАРТЫ
+       ============================================================ */
+    document.querySelectorAll('.oopt-item').forEach(function (item) {
+      item.addEventListener('click', function (e) {
+        if (e.target.closest('.js-detail')) return;
+        var id = item.getAttribute('data-id');
+        var m = markers[id];
+        if (m) {
+          map.setView(m.getLatLng(), 12, { animate: true });
+          cluster.zoomToShowLayer(m, function () {
+            m.openPopup();
+          });
+        }
+      });
+    });
+
+    /* ============================================================
+       4. ФИЛЬТРАЦИЯ (Категория, Район, Поиск, Доступ)
+       ============================================================ */
+    var filters = {
+      category: '',
+      district: '',
+      search: '',
+      access: []
+    };
+
+    function applyFilters() {
+      var visibleCount = 0;
+      var items = document.querySelectorAll('.oopt-item');
+
+      items.forEach(function (item) {
+        var id = item.getAttribute('data-id');
+        var cat = item.getAttribute('data-category');
+        var dist = item.getAttribute('data-district');
+        var acc = item.getAttribute('data-access');
+        var text = item.textContent.toLowerCase();
+
+        var matchCat = !filters.category || cat === filters.category;
+        var matchDist = !filters.district || dist === filters.district;
+        var matchSearch = !filters.search || text.includes(filters.search.toLowerCase());
+        var matchAccess = filters.access.length === 0 || filters.access.includes(acc);
+
+        if (matchCat && matchDist && matchSearch && matchAccess) {
+          item.style.display = 'block';
+          visibleCount++;
+          if (markers[id]) cluster.addLayer(markers[id]);
+        } else {
+          item.style.display = 'none';
+          if (markers[id]) cluster.removeLayer(markers[id]);
+        }
+      });
+
+      document.getElementById('ooptCount').textContent = visibleCount + ' ООПТ';
+    }
+
+    /* Слушатели фильтров */
+    document.querySelectorAll('[data-filter="category"]').forEach(function (el) {
+      el.addEventListener('change', function () {
+        filters.category = this.value.toLowerCase();
+        applyFilters();
+      });
+    });
+
+    document.querySelectorAll('[data-filter="district"]').forEach(function (el) {
+      el.addEventListener('change', function () {
+        filters.district = this.value.toLowerCase();
+        applyFilters();
+      });
+    });
+
+    document.querySelectorAll('[data-filter="search"]').forEach(function (el) {
+      el.addEventListener('input', function () {
+        filters.search = this.value;
+        applyFilters();
+      });
+    });
+
+    document.querySelectorAll('[data-filter="access"]').forEach(function (el) {
+      el.addEventListener('change', function () {
+        filters.access = Array.from(document.querySelectorAll('[data-filter="access"]:checked')).map(function (cb) {
+          return cb.value.toLowerCase();
+        });
+        applyFilters();
+      });
     });
   });
 </script>
